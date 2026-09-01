@@ -1,0 +1,568 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"4 ./adc.h
+[v _init_adc `(v ~T0 @X0 0 ef ]
+"30 ./clcd.h
+[v _init_clcd `(v ~T0 @X0 0 ef ]
+"6 ./i2c.h
+[v _init_i2c `(v ~T0 @X0 0 ef1`ul ]
+"12 ./ds1307.h
+[v _init_ds1307 `(v ~T0 @X0 0 ef ]
+"25 ./digital_keypad.h
+[v _init_digital_keypad `(v ~T0 @X0 0 ef ]
+"5 ./timers.h
+[v _init_timer2 `(v ~T0 @X0 0 ef ]
+"2633 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
+[v _PEIE `Vb ~T0 @X0 0 e@94 ]
+"2573
+[v _GIE `Vb ~T0 @X0 0 e@95 ]
+[p mainexit ]
+"4 ./car_black_box_def.h
+[v _log_car_event `(v ~T0 @X0 0 ef2`*uc`uc ]
+"114 /opt/microchip/xc8/v2.46/pic/include/eeprom_routines.h
+[v _eeprom_write `(v ~T0 @X0 0 ef2`uc`uc ]
+"5 ./adc.h
+[v _read_adc `(us ~T0 @X0 0 ef ]
+"24 ./digital_keypad.h
+[v _read_digital_keypad `(uc ~T0 @X0 0 ef1`uc ]
+"33 /opt/microchip/xc8/v2.46/pic/include/c99/string.h
+[v _strcpy `(*uc ~T0 @X0 0 ef2`*uc`*Cuc ]
+"5 ./car_black_box_def.h
+[v _clear_screen `(v ~T0 @X0 0 ef ]
+"32 ./clcd.h
+[v _clcd_print `(v ~T0 @X0 0 ef2`*Cuc`uc ]
+"33
+[v _clcd_write `(v ~T0 @X0 0 ef2`uc`uc ]
+[v F164 `(v ~T0 @X0 1 tf1`ul ]
+"20 /opt/microchip/xc8/v2.46/pic/include/builtins.h
+[v __delay `JF164 ~T0 @X0 0 e ]
+[p i __delay ]
+"2906 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
+[v _TMR2ON `Vb ~T0 @X0 0 e@146 ]
+"3 ./car_black_box_def.h
+[v _display_dash_board `(v ~T0 @X0 0 ef2`*uc`uc ]
+"6
+[v _login `(uc ~T0 @X0 0 ef2`uc`uc ]
+"7
+[v _login_menu `(uc ~T0 @X0 0 ef2`uc`uc ]
+"8
+[v _view_log `(v ~T0 @X0 0 ef2`uc`uc ]
+"9
+[v _clear_log `(uc ~T0 @X0 0 ef1`uc ]
+"10
+[v _change_password `(uc ~T0 @X0 0 ef2`uc`uc ]
+"54 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
+[; <" INDF equ 00h ;# ">
+"61
+[; <" TMR0 equ 01h ;# ">
+"68
+[; <" PCL equ 02h ;# ">
+"75
+[; <" STATUS equ 03h ;# ">
+"161
+[; <" FSR equ 04h ;# ">
+"168
+[; <" PORTA equ 05h ;# ">
+"218
+[; <" PORTB equ 06h ;# ">
+"280
+[; <" PORTC equ 07h ;# ">
+"342
+[; <" PORTD equ 08h ;# ">
+"404
+[; <" PORTE equ 09h ;# ">
+"436
+[; <" PCLATH equ 0Ah ;# ">
+"456
+[; <" INTCON equ 0Bh ;# ">
+"534
+[; <" PIR1 equ 0Ch ;# ">
+"596
+[; <" PIR2 equ 0Dh ;# ">
+"636
+[; <" TMR1 equ 0Eh ;# ">
+"643
+[; <" TMR1L equ 0Eh ;# ">
+"650
+[; <" TMR1H equ 0Fh ;# ">
+"657
+[; <" T1CON equ 010h ;# ">
+"732
+[; <" TMR2 equ 011h ;# ">
+"739
+[; <" T2CON equ 012h ;# ">
+"810
+[; <" SSPBUF equ 013h ;# ">
+"817
+[; <" SSPCON equ 014h ;# ">
+"887
+[; <" CCPR1 equ 015h ;# ">
+"894
+[; <" CCPR1L equ 015h ;# ">
+"901
+[; <" CCPR1H equ 016h ;# ">
+"908
+[; <" CCP1CON equ 017h ;# ">
+"966
+[; <" RCSTA equ 018h ;# ">
+"1061
+[; <" TXREG equ 019h ;# ">
+"1068
+[; <" RCREG equ 01Ah ;# ">
+"1075
+[; <" CCPR2 equ 01Bh ;# ">
+"1082
+[; <" CCPR2L equ 01Bh ;# ">
+"1089
+[; <" CCPR2H equ 01Ch ;# ">
+"1096
+[; <" CCP2CON equ 01Dh ;# ">
+"1154
+[; <" ADRESH equ 01Eh ;# ">
+"1161
+[; <" ADCON0 equ 01Fh ;# ">
+"1257
+[; <" OPTION_REG equ 081h ;# ">
+"1327
+[; <" TRISA equ 085h ;# ">
+"1377
+[; <" TRISB equ 086h ;# ">
+"1439
+[; <" TRISC equ 087h ;# ">
+"1501
+[; <" TRISD equ 088h ;# ">
+"1563
+[; <" TRISE equ 089h ;# ">
+"1620
+[; <" PIE1 equ 08Ch ;# ">
+"1682
+[; <" PIE2 equ 08Dh ;# ">
+"1722
+[; <" PCON equ 08Eh ;# ">
+"1756
+[; <" SSPCON2 equ 091h ;# ">
+"1818
+[; <" PR2 equ 092h ;# ">
+"1825
+[; <" SSPADD equ 093h ;# ">
+"1832
+[; <" SSPSTAT equ 094h ;# ">
+"2001
+[; <" TXSTA equ 098h ;# ">
+"2082
+[; <" SPBRG equ 099h ;# ">
+"2089
+[; <" CMCON equ 09Ch ;# ">
+"2159
+[; <" CVRCON equ 09Dh ;# ">
+"2224
+[; <" ADRESL equ 09Eh ;# ">
+"2231
+[; <" ADCON1 equ 09Fh ;# ">
+"2290
+[; <" EEDATA equ 010Ch ;# ">
+"2297
+[; <" EEADR equ 010Dh ;# ">
+"2304
+[; <" EEDATH equ 010Eh ;# ">
+"2311
+[; <" EEADRH equ 010Fh ;# ">
+"2318
+[; <" EECON1 equ 018Ch ;# ">
+"2363
+[; <" EECON2 equ 018Dh ;# ">
+"17 main.c
+[p x FOSC    =  HS       ]
+"18
+[p x WDTE    =  OFF      ]
+"19
+[p x PWRTE  =  ON       ]
+"20
+[p x BOREN  =  ON       ]
+"21
+[p x LVP      =  OFF      ]
+"22
+[p x CPD      =  OFF      ]
+"23
+[p x WRT      =  OFF      ]
+"24
+[p x CP        =  OFF      ]
+"26
+[v _gear `*uc ~T0 @X0 -> 6 `i e ]
+[i _gear
+:U ..
+:s 1C
+:s 2C
+:s 3C
+:s 4C
+:s 5C
+:s 6C
+..
+]
+"28
+[v _init_config `(v ~T0 @X0 1 sf ]
+{
+[e :U _init_config ]
+[f ]
+"31
+[e ( _init_adc ..  ]
+"32
+[e ( _init_clcd ..  ]
+"33
+[e ( _init_i2c (1 -> -> 100000 `l `ul ]
+"34
+[e ( _init_ds1307 ..  ]
+"35
+[e ( _init_digital_keypad ..  ]
+"36
+[e ( _init_timer2 ..  ]
+"37
+[e = _PEIE -> -> 1 `i `b ]
+"38
+[e = _GIE -> -> 1 `i `b ]
+"39
+[e :UE 100 ]
+}
+[v $root$_main `(v ~T0 @X0 0 e ]
+"42
+[v _main `(v ~T0 @X0 1 ef ]
+{
+[e :U _main ]
+[f ]
+[v F1228 `uc ~T0 @X0 -> 3 `i s ]
+[i F1228
+:U ..
+"43
+-> 79 `c
+-> 78 `c
+-> 0 `c
+..
+]
+[v _event `uc ~T0 @X0 -> 3 `i a ]
+[e = _event F1228 ]
+"44
+[v _speed `uc ~T0 @X0 1 a ]
+[e = _speed -> -> 0 `i `uc ]
+"45
+[v _control_flag `uc ~T0 @X0 1 a ]
+[e = _control_flag -> -> 2 `i `uc ]
+"46
+[v _key `uc ~T0 @X0 1 a ]
+[v _reset_flag `uc ~T0 @X0 1 a ]
+[v _menu_pos `uc ~T0 @X0 1 a ]
+"47
+[v _gr `uc ~T0 @X0 1 a ]
+[e = _gr -> -> 0 `i `uc ]
+"49
+[e ( _init_config ..  ]
+"50
+[e ( _log_car_event (2 , &U _event _speed ]
+"52
+[e ( _eeprom_write (2 , -> -> 0 `i `uc -> -> 50 `ui `uc ]
+"53
+[e ( _eeprom_write (2 , -> -> 1 `i `uc -> -> 52 `ui `uc ]
+"54
+[e ( _eeprom_write (2 , -> -> 2 `i `uc -> -> 50 `ui `uc ]
+"55
+[e ( _eeprom_write (2 , -> -> 3 `i `uc -> -> 52 `ui `uc ]
+"56
+[e :U 103 ]
+"57
+{
+"58
+[e = _speed -> / -> ( _read_adc ..  `ui -> -> 10 `i `ui `uc ]
+"59
+[e $ ! > -> _speed `i -> 99 `i 105  ]
+"60
+{
+"61
+[e = _speed -> -> 99 `i `uc ]
+"62
+}
+[e :U 105 ]
+"63
+[e = _key ( _read_digital_keypad (1 -> -> 1 `i `uc ]
+"64
+{
+[v _j `i ~T0 @X0 1 a ]
+[e = _j -> 3000 `i ]
+[e $U 109  ]
+[e :U 106 ]
+[e :U 109 ]
+[e $ != -- _j -> 1 `i -> 0 `i 106  ]
+[e :U 107 ]
+}
+"65
+[e $ ! == -> _key `i -> 62 `i 110  ]
+"66
+{
+"67
+[e ( _strcpy (2 , &U _event :s 7C ]
+"68
+[e ( _log_car_event (2 , &U _event _speed ]
+"69
+}
+[e $U 111  ]
+"70
+[e :U 110 ]
+[e $ ! && == -> _key `i -> 61 `i < -> _gr `i -> 6 `i 112  ]
+"71
+{
+"72
+[e ( _strcpy (2 , &U _event -> *U + &U _gear * -> _gr `ux -> -> # *U &U _gear `ui `ux `*Cuc ]
+"73
+[e ( _log_car_event (2 , &U _event _speed ]
+"74
+[e ++ _gr -> -> 1 `i `uc ]
+"75
+}
+[e $U 113  ]
+"76
+[e :U 112 ]
+[e $ ! && == -> _key `i -> 59 `i > -> _gr `i -> 0 `i 114  ]
+"77
+{
+"78
+[e -- _gr -> -> 1 `i `uc ]
+"79
+[e ( _strcpy (2 , &U _event -> *U + &U _gear * -> _gr `ux -> -> # *U &U _gear `ui `ux `*Cuc ]
+"80
+[e ( _log_car_event (2 , &U _event _speed ]
+"81
+}
+[e $U 115  ]
+"82
+[e :U 114 ]
+[e $ ! && == -> _control_flag `i -> 2 `i || == -> _key `i -> 55 `i == -> _key `i -> 47 `i 116  ]
+"83
+{
+"84
+[e ( _clear_screen ..  ]
+"85
+[e ( _clcd_print (2 , :s 8C -> + -> 128 `i -> 0 `i `uc ]
+"86
+[e ( _clcd_write (2 , -> -> 198 `i `uc -> -> 0 `i `uc ]
+"87
+[e ( _clcd_write (2 , -> -> 15 `i `uc -> -> 0 `i `uc ]
+"88
+[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 20000000 `l `d .4000000.0 `ul ]
+"89
+[e = _control_flag -> -> 4 `i `uc ]
+"90
+[e = _reset_flag -> -> 17 `i `uc ]
+"91
+[e = _TMR2ON -> -> 1 `i `b ]
+"92
+}
+[e $U 117  ]
+"93
+[e :U 116 ]
+[e $ ! && == -> _control_flag `i -> 6 `i == -> _key `i -> 31 `i 118  ]
+"94
+{
+"95
+[e $U 120  ]
+"96
+{
+"97
+[e :U 121 ]
+"98
+[e ( _clear_screen ..  ]
+"99
+[e ( _clcd_print (2 , :s 9C -> + -> 128 `i -> 0 `i `uc ]
+"100
+[e = _control_flag -> -> 8 `i `uc ]
+"101
+[e = _reset_flag -> -> 21 `i `uc ]
+"102
+[e $U 119  ]
+"103
+[e :U 122 ]
+"104
+[e ( _log_car_event (2 , :s 10C _speed ]
+"105
+[e ( _clear_screen ..  ]
+"106
+[e = _control_flag -> -> 10 `i `uc ]
+"107
+[e = _reset_flag -> -> 23 `i `uc ]
+"108
+[e $U 119  ]
+"109
+[e :U 123 ]
+"110
+[e ( _log_car_event (2 , :s 11C _speed ]
+"111
+[e ( _clear_screen ..  ]
+"112
+[e = _control_flag -> -> 11 `i `uc ]
+"113
+[e = _reset_flag -> -> 25 `i `uc ]
+"114
+[e $U 119  ]
+"115
+}
+[e $U 119  ]
+[e :U 120 ]
+[e [\ _menu_pos , $ -> 0 `i 121
+ , $ -> 1 `i 122
+ , $ -> 2 `i 123
+ 119 ]
+[e :U 119 ]
+"116
+}
+[e :U 118 ]
+[e :U 117 ]
+[e :U 115 ]
+[e :U 113 ]
+[e :U 111 ]
+"118
+[e $U 125  ]
+"119
+{
+"120
+[e :U 126 ]
+"121
+[e ( _display_dash_board (2 , &U _event _speed ]
+"122
+[e $U 124  ]
+"123
+[e :U 127 ]
+"124
+[e $U 129  ]
+"125
+{
+"126
+[e :U 130 ]
+"127
+[e = _control_flag -> -> 2 `i `uc ]
+"128
+[e = _TMR2ON -> -> 0 `i `b ]
+"129
+[e ( _clcd_write (2 , -> -> 12 `i `uc -> -> 0 `i `uc ]
+"130
+[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 20000000 `l `d .4000000.0 `ul ]
+"131
+[e $U 128  ]
+"132
+[e :U 131 ]
+"133
+[e = _control_flag -> -> 6 `i `uc ]
+"134
+[e = _reset_flag -> -> 19 `i `uc ]
+"135
+[e ( _clear_screen ..  ]
+"136
+[e ( _clcd_write (2 , -> -> 12 `i `uc -> -> 0 `i `uc ]
+"137
+[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 20000000 `l `d .4000000.0 `ul ]
+"138
+[e = _TMR2ON -> -> 0 `i `b ]
+"139
+[e $U 102  ]
+"140
+}
+[e $U 128  ]
+[e :U 129 ]
+[e [\ ( _login (2 , _key _reset_flag , $ -> 2 `i 130
+ , $ -> 17 `i 131
+ 128 ]
+[e :U 128 ]
+"141
+[e $U 124  ]
+"142
+[e :U 132 ]
+"143
+[e = _menu_pos -> ( _login_menu (2 , _key _reset_flag `uc ]
+"144
+[e $U 124  ]
+"145
+[e :U 133 ]
+"146
+[e ( _view_log (2 , _key _reset_flag ]
+"147
+[e $U 124  ]
+"148
+[e :U 134 ]
+"149
+[e $ ! == -> ( _clear_log (1 _reset_flag `i -> 17 `i 135  ]
+"150
+{
+"151
+[e ( _clear_screen ..  ]
+"152
+[e = _control_flag -> -> 6 `i `uc ]
+"153
+[e = _reset_flag -> -> 19 `i `uc ]
+"154
+[e $U 102  ]
+"155
+}
+[e :U 135 ]
+"156
+[e $U 124  ]
+"157
+[e :U 136 ]
+"158
+[e $U 138  ]
+"159
+{
+"160
+[e :U 139 ]
+"161
+[e ( _clear_screen ..  ]
+"162
+[e ( _clcd_write (2 , -> -> 12 `i `uc -> -> 0 `i `uc ]
+"163
+[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 20000000 `l `d .4000000.0 `ul ]
+"164
+[e = _control_flag -> -> 6 `i `uc ]
+"165
+[e = _reset_flag -> -> 19 `i `uc ]
+"166
+[e $U 102  ]
+"167
+[e $U 137  ]
+"168
+}
+[e $U 137  ]
+[e :U 138 ]
+[e [\ ( _change_password (2 , _key _reset_flag , $ -> 17 `i 139
+ 137 ]
+[e :U 137 ]
+"170
+[e $U 124  ]
+"171
+}
+[e $U 124  ]
+[e :U 125 ]
+[e [\ _control_flag , $ -> 2 `i 126
+ , $ -> 4 `i 127
+ , $ -> 6 `i 132
+ , $ -> 8 `i 133
+ , $ -> 10 `i 134
+ , $ -> 11 `i 136
+ 124 ]
+[e :U 124 ]
+"172
+[e = _reset_flag -> -> 255 `i `uc ]
+"173
+}
+[e :U 102 ]
+[e $U 103  ]
+[e :U 104 ]
+"174
+[e $UE 101  ]
+"175
+[e :UE 101 ]
+}
+[a 2C 71 82 0 ]
+[a 9C 35 32 84 73 77 69 32 32 32 32 32 69 32 32 83 80 0 ]
+[a 11C 67 80 0 ]
+[a 1C 71 78 0 ]
+[a 10C 67 76 0 ]
+[a 6C 71 52 0 ]
+[a 5C 71 51 0 ]
+[a 4C 71 50 0 ]
+[a 3C 71 49 0 ]
+[a 8C 32 69 78 84 69 82 32 32 80 65 83 83 87 79 82 68 32 0 ]
+[a 7C 67 32 0 ]

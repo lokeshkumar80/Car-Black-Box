@@ -1,0 +1,208 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"2322 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
+[s S98 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :3 `uc 1 :1 `uc 1 ]
+[n S98 . RD WR WREN WRERR . EEPGD ]
+"2321
+[u S97 `S98 1 ]
+[n S97 . . ]
+"2331
+[v _EECON1bits `VS97 ~T0 @X0 0 e@396 ]
+"2295
+[v _EEADR `Vuc ~T0 @X0 0 e@269 ]
+"2288
+[v _EEDATA `Vuc ~T0 @X0 0 e@268 ]
+"2316
+[v _EECON1 `Vuc ~T0 @X0 0 e@396 ]
+"79
+[s S6 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :2 `uc 1 :1 `uc 1 ]
+[n S6 . C DC Z nPD nTO RP IRP ]
+"88
+[s S7 :5 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S7 . . RP0 RP1 ]
+"93
+[s S8 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S8 . CARRY . ZERO ]
+"78
+[u S5 `S6 1 `S7 1 `S8 1 ]
+[n S5 . . . . ]
+"99
+[v _STATUSbits `VS5 ~T0 @X0 0 e@3 ]
+"460
+[s S22 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S22 . RBIF INTF TMR0IF RBIE INTE TMR0IE PEIE GIE ]
+"470
+[s S23 :2 `uc 1 :1 `uc 1 :2 `uc 1 :1 `uc 1 ]
+[n S23 . . T0IF . T0IE ]
+"459
+[u S21 `S22 1 `S23 1 ]
+[n S21 . . . ]
+"477
+[v _INTCONbits `VS21 ~T0 @X0 0 e@11 ]
+"2361
+[v _EECON2 `Vuc ~T0 @X0 0 e@397 ]
+"54 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
+[; <" INDF equ 00h ;# ">
+"61
+[; <" TMR0 equ 01h ;# ">
+"68
+[; <" PCL equ 02h ;# ">
+"75
+[; <" STATUS equ 03h ;# ">
+"161
+[; <" FSR equ 04h ;# ">
+"168
+[; <" PORTA equ 05h ;# ">
+"218
+[; <" PORTB equ 06h ;# ">
+"280
+[; <" PORTC equ 07h ;# ">
+"342
+[; <" PORTD equ 08h ;# ">
+"404
+[; <" PORTE equ 09h ;# ">
+"436
+[; <" PCLATH equ 0Ah ;# ">
+"456
+[; <" INTCON equ 0Bh ;# ">
+"534
+[; <" PIR1 equ 0Ch ;# ">
+"596
+[; <" PIR2 equ 0Dh ;# ">
+"636
+[; <" TMR1 equ 0Eh ;# ">
+"643
+[; <" TMR1L equ 0Eh ;# ">
+"650
+[; <" TMR1H equ 0Fh ;# ">
+"657
+[; <" T1CON equ 010h ;# ">
+"732
+[; <" TMR2 equ 011h ;# ">
+"739
+[; <" T2CON equ 012h ;# ">
+"810
+[; <" SSPBUF equ 013h ;# ">
+"817
+[; <" SSPCON equ 014h ;# ">
+"887
+[; <" CCPR1 equ 015h ;# ">
+"894
+[; <" CCPR1L equ 015h ;# ">
+"901
+[; <" CCPR1H equ 016h ;# ">
+"908
+[; <" CCP1CON equ 017h ;# ">
+"966
+[; <" RCSTA equ 018h ;# ">
+"1061
+[; <" TXREG equ 019h ;# ">
+"1068
+[; <" RCREG equ 01Ah ;# ">
+"1075
+[; <" CCPR2 equ 01Bh ;# ">
+"1082
+[; <" CCPR2L equ 01Bh ;# ">
+"1089
+[; <" CCPR2H equ 01Ch ;# ">
+"1096
+[; <" CCP2CON equ 01Dh ;# ">
+"1154
+[; <" ADRESH equ 01Eh ;# ">
+"1161
+[; <" ADCON0 equ 01Fh ;# ">
+"1257
+[; <" OPTION_REG equ 081h ;# ">
+"1327
+[; <" TRISA equ 085h ;# ">
+"1377
+[; <" TRISB equ 086h ;# ">
+"1439
+[; <" TRISC equ 087h ;# ">
+"1501
+[; <" TRISD equ 088h ;# ">
+"1563
+[; <" TRISE equ 089h ;# ">
+"1620
+[; <" PIE1 equ 08Ch ;# ">
+"1682
+[; <" PIE2 equ 08Dh ;# ">
+"1722
+[; <" PCON equ 08Eh ;# ">
+"1756
+[; <" SSPCON2 equ 091h ;# ">
+"1818
+[; <" PR2 equ 092h ;# ">
+"1825
+[; <" SSPADD equ 093h ;# ">
+"1832
+[; <" SSPSTAT equ 094h ;# ">
+"2001
+[; <" TXSTA equ 098h ;# ">
+"2082
+[; <" SPBRG equ 099h ;# ">
+"2089
+[; <" CMCON equ 09Ch ;# ">
+"2159
+[; <" CVRCON equ 09Dh ;# ">
+"2224
+[; <" ADRESL equ 09Eh ;# ">
+"2231
+[; <" ADCON1 equ 09Fh ;# ">
+"2290
+[; <" EEDATA equ 010Ch ;# ">
+"2297
+[; <" EEADR equ 010Dh ;# ">
+"2304
+[; <" EEDATH equ 010Eh ;# ">
+"2311
+[; <" EEADRH equ 010Fh ;# ">
+"2318
+[; <" EECON1 equ 018Ch ;# ">
+"2363
+[; <" EECON2 equ 018Dh ;# ">
+"6 /opt/microchip/xc8/v2.46/pic/sources/c99/pic/__eewrite.c
+[v _eeprom_write `(v ~T0 @X0 1 ef2`uc`uc ]
+"7
+{
+[e :U _eeprom_write ]
+"6
+[v _addr `uc ~T0 @X0 1 r1 ]
+[v _value `uc ~T0 @X0 1 r2 ]
+"7
+[f ]
+"8
+[e :U 102 ]
+{
+[e $U 103  ]
+[e :U 104 ]
+{
+[e $U 103  ]
+}
+[e :U 103 ]
+[e $ != -> . . _EECON1bits 0 1 `i -> 0 `i 104  ]
+[e :U 105 ]
+[e = _EEADR _addr ]
+[e = _EEDATA _value ]
+[e =& _EECON1 -> -> 63 `i `Vuc ]
+[e = . . _STATUSbits 2 0 -> -> 0 `i `uc ]
+[e $ ! != -> . . _INTCONbits 0 7 `i -> 0 `i 106  ]
+{
+[e = . . _STATUSbits 2 0 -> -> 1 `i `uc ]
+}
+[e :U 106 ]
+[e = . . _INTCONbits 0 7 -> -> 0 `i `uc ]
+[e = . . _EECON1bits 0 2 -> -> 1 `i `uc ]
+[e = _EECON2 -> -> 85 `i `uc ]
+[e = _EECON2 -> -> 170 `i `uc ]
+[e = . . _EECON1bits 0 1 -> -> 1 `i `uc ]
+[e = . . _EECON1bits 0 2 -> -> 0 `i `uc ]
+[e $ ! != -> . . _STATUSbits 2 0 `i -> 0 `i 107  ]
+{
+[e = . . _INTCONbits 0 7 -> -> 1 `i `uc ]
+}
+[e :U 107 ]
+}
+[e :U 101 ]
+"9
+[e :UE 99 ]
+}

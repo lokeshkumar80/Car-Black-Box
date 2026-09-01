@@ -1,0 +1,28 @@
+{
+  "version": 4,
+  "configurations": [
+    {
+      "name": "XC8 PIC16F877A",
+      "includePath": [
+        "${workspaceFolder}/firmware",
+        "/opt/microchip/xc8/v2.46/pic/include",
+        "/opt/microchip/xc8/v2.46/pic/include/c90",
+        "/opt/microchip/xc8/v2.46/pic/include/legacy"
+      ],
+      "forcedInclude": [
+        "/opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h"
+      ],
+      "defines": [
+        "__XC8",
+        "__PICC__",
+        "_16F877A",
+        "__at(x)=",
+        "__interrupt()=",
+        "__delay_us(x)=",
+        "__delay_ms(x)="
+      ],
+      "cStandard": "c99",
+      "intelliSenseMode": "linux-clang-x64"
+    }
+  ]
+}
