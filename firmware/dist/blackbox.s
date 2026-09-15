@@ -1600,12 +1600,12 @@ EECON2 equ 018Dh ;#
 	FNCALL	_read_ds1307,_i2c_start
 	FNCALL	_read_ds1307,_i2c_stop
 	FNCALL	_read_ds1307,_i2c_write
-	FNCALL	_i2c_write,_i2c_wait_for_idle
+	FNCALL	_i2c_write,_i2c_wait
 	FNCALL	_i2c_rep_start,_i2c_start
 	FNCALL	_i2c_rep_start,_i2c_stop
-	FNCALL	_i2c_stop,_i2c_wait_for_idle
-	FNCALL	_i2c_start,_i2c_wait_for_idle
-	FNCALL	_i2c_read,_i2c_wait_for_idle
+	FNCALL	_i2c_stop,_i2c_wait
+	FNCALL	_i2c_start,_i2c_wait
+	FNCALL	_i2c_read,_i2c_wait
 	FNCALL	_clear_log,_clcd_print
 	FNCALL	_change_password,_clcd_print
 	FNCALL	_change_password,_clcd_putch
@@ -1732,6 +1732,8 @@ _ADCS1	set	0xFF
 _SSPEN	set	0xA5
 	global	_SSPM3
 _SSPM3	set	0xA3
+	global	_SSPIF
+_SSPIF	set	0x63
 	global	_RE1
 _RE1	set	0x49
 	global	_RE2
@@ -1750,8 +1752,6 @@ _TRISB	set	0x86
 _ADRESL	set	0x9E
 	global	_ADCON1
 _ADCON1	set	0x9F
-	global	_SSPCON2
-_SSPCON2	set	0x91
 	global	_SSPADD
 _SSPADD	set	0x93
 	global	_TRISD
@@ -1770,8 +1770,6 @@ _RCEN	set	0x48B
 _PEN	set	0x48A
 	global	_SEN
 _SEN	set	0x488
-	global	_R_nW
-_R_nW	set	0x4A2
 	global	_TRISE1
 _TRISE1	set	0x449
 	global	_TRISE2
@@ -2427,7 +2425,7 @@ __pcstackCOMMON:
 ?_init_config:	; 1 bytes @ 0x0
 ?_main:	; 1 bytes @ 0x0
 ?_init_display_controller:	; 1 bytes @ 0x0
-?_i2c_wait_for_idle:	; 1 bytes @ 0x0
+?_i2c_wait:	; 1 bytes @ 0x0
 ?_i2c_start:	; 1 bytes @ 0x0
 ?_i2c_rep_start:	; 1 bytes @ 0x0
 ?_i2c_read:	; 1 bytes @ 0x0
@@ -2447,7 +2445,7 @@ __pcstackCOMMON:
 ?_clcd_write:	; 1 bytes @ 0x2
 ?_strncpy:	; 1 bytes @ 0x2
 ??_eeprom_read:	; 1 bytes @ 0x2
-??_i2c_wait_for_idle:	; 1 bytes @ 0x2
+??_i2c_wait:	; 1 bytes @ 0x2
 ?___bmul:	; 1 bytes @ 0x2
 	global	?_read_adc
 ?_read_adc:	; 2 bytes @ 0x2
@@ -2467,8 +2465,8 @@ eeprom_write@value:	; 1 bytes @ 0x2
 ___bmul@multiplicand:	; 1 bytes @ 0x2
 	global	strncmp@r
 strncmp@r:	; 1 bytes @ 0x2
-	global	i2c_wait_for_idle@guard
-i2c_wait_for_idle@guard:	; 2 bytes @ 0x2
+	global	i2c_wait@guard
+i2c_wait@guard:	; 2 bytes @ 0x2
 	global	___awdiv@divisor
 ___awdiv@divisor:	; 2 bytes @ 0x2
 	global	___awmod@divisor
@@ -2772,10 +2770,10 @@ view_log@i:	; 2 bytes @ 0x15
 ;!    _display_time->_clcd_putch
 ;!    _get_time->_read_ds1307
 ;!    _read_ds1307->_i2c_read
-;!    _i2c_write->_i2c_wait_for_idle
-;!    _i2c_stop->_i2c_wait_for_idle
-;!    _i2c_start->_i2c_wait_for_idle
-;!    _i2c_read->_i2c_wait_for_idle
+;!    _i2c_write->_i2c_wait
+;!    _i2c_stop->_i2c_wait
+;!    _i2c_start->_i2c_wait
+;!    _i2c_read->_i2c_wait
 ;!    _clear_log->_clcd_print
 ;!    _change_password->_clcd_putch
 ;!    _clear_screen->_clcd_write
@@ -2982,23 +2980,23 @@ view_log@i:	; 2 bytes @ 0x15
 ;! ---------------------------------------------------------------------------------
 ;! (4) _i2c_write                                            1     1      0      65
 ;!                                              4 COMMON     1     1      0
-;!                  _i2c_wait_for_idle
+;!                           _i2c_wait
 ;! ---------------------------------------------------------------------------------
 ;! (4) _i2c_rep_start                                        0     0      0      68
 ;!                          _i2c_start
 ;!                           _i2c_stop
 ;! ---------------------------------------------------------------------------------
 ;! (4) _i2c_stop                                             0     0      0      34
-;!                  _i2c_wait_for_idle
+;!                           _i2c_wait
 ;! ---------------------------------------------------------------------------------
 ;! (4) _i2c_start                                            0     0      0      34
-;!                  _i2c_wait_for_idle
+;!                           _i2c_wait
 ;! ---------------------------------------------------------------------------------
 ;! (4) _i2c_read                                             2     2      0      99
 ;!                                              4 COMMON     2     2      0
-;!                  _i2c_wait_for_idle
+;!                           _i2c_wait
 ;! ---------------------------------------------------------------------------------
-;! (5) _i2c_wait_for_idle                                    2     2      0      34
+;! (5) _i2c_wait                                             2     2      0      34
 ;!                                              2 COMMON     2     2      0
 ;! ---------------------------------------------------------------------------------
 ;! (2) ___awmod                                              7     3      4    1153
@@ -3093,16 +3091,16 @@ view_log@i:	; 2 bytes @ 0x15
 ;!       _get_time
 ;!         _read_ds1307
 ;!           _i2c_read
-;!             _i2c_wait_for_idle
+;!             _i2c_wait
 ;!           _i2c_rep_start
 ;!             _i2c_start
-;!               _i2c_wait_for_idle
+;!               _i2c_wait
 ;!             _i2c_stop
-;!               _i2c_wait_for_idle
+;!               _i2c_wait
 ;!           _i2c_start
 ;!           _i2c_stop
 ;!           _i2c_write
-;!             _i2c_wait_for_idle
+;!             _i2c_wait
 ;!   _eeprom_write
 ;!   _init_config
 ;!     _init_adc
@@ -3248,7 +3246,7 @@ _main:
 ; Regs used in _main: [wreg-fsr0h+status,2+status,0+btemp+1+pclath+cstack]
 	line	43
 	
-l3558:	
+l3566:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(main@F1228),w
@@ -3269,21 +3267,21 @@ l3558:
 	movwf	(main@event+2)^080h
 	line	44
 	
-l3560:	
+l3568:	
 	line	45
 	
-l3562:	
+l3570:	
 	movlw	low(02h)
 	movwf	(main@control_flag)^080h
 	line	47
 	clrf	(main@gr)^080h
 	line	49
 	
-l3564:	
+l3572:	
 	fcall	_init_config
 	line	50
 	
-l3566:	
+l3574:	
 	movlw	(low(main@event|((0x0)<<8))&0ffh)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3294,35 +3292,35 @@ l3566:
 	fcall	_log_car_event
 	line	52
 	
-l3568:	
+l3576:	
 	movlw	low(032h)
 	movwf	(eeprom_write@value)
 	movlw	low(0)
 	fcall	_eeprom_write
 	line	53
 	
-l3570:	
+l3578:	
 	movlw	low(034h)
 	movwf	(eeprom_write@value)
 	movlw	low(01h)
 	fcall	_eeprom_write
 	line	54
 	
-l3572:	
+l3580:	
 	movlw	low(032h)
 	movwf	(eeprom_write@value)
 	movlw	low(02h)
 	fcall	_eeprom_write
 	line	55
 	
-l3574:	
+l3582:	
 	movlw	low(034h)
 	movwf	(eeprom_write@value)
 	movlw	low(03h)
 	fcall	_eeprom_write
 	line	58
 	
-l3576:	
+l3584:	
 	movlw	0Ah
 	movwf	(___lwdiv@divisor)
 	movlw	0
@@ -3339,23 +3337,23 @@ l3576:
 	movwf	(main@speed)^080h
 	line	59
 	
-l3578:	
+l3586:	
 	movlw	low(064h)
 	subwf	(main@speed)^080h,w
 	skipc
-	goto	u3461
-	goto	u3460
-u3461:
-	goto	l3582
-u3460:
+	goto	u3431
+	goto	u3430
+u3431:
+	goto	l3590
+u3430:
 	line	61
 	
-l3580:	
+l3588:	
 	movlw	low(063h)
 	movwf	(main@speed)^080h
 	line	63
 	
-l3582:	
+l3590:	
 	movlw	low(01h)
 	fcall	_read_digital_keypad
 	bsf	status, 5	;RP0=1, select bank1
@@ -3363,13 +3361,13 @@ l3582:
 	movwf	(main@key)^080h
 	line	64
 	
-l3584:	
+l3592:	
 	movlw	0B8h
 	movwf	(main@j)^080h
 	movlw	0Bh
 	movwf	((main@j)^080h)+1
 	
-l3586:	
+l3594:	
 	movlw	0FFh
 	addwf	(main@j)^080h,f
 	skipnc
@@ -3378,28 +3376,28 @@ l3586:
 	addwf	(main@j+1)^080h,f
 		incf	(((main@j)^080h)),w
 	skipz
-	goto	u3471
+	goto	u3441
 	incf	(((main@j+1)^080h)),w
 	btfss	status,2
-	goto	u3471
-	goto	u3470
-u3471:
-	goto	l3586
-u3470:
+	goto	u3441
+	goto	u3440
+u3441:
+	goto	l3594
+u3440:
 	line	65
 	
-l3588:	
+l3596:	
 		movlw	62
 	xorwf	((main@key)^080h),w
 	btfss	status,2
-	goto	u3481
-	goto	u3480
-u3481:
-	goto	l3592
-u3480:
+	goto	u3451
+	goto	u3450
+u3451:
+	goto	l3600
+u3450:
 	line	67
 	
-l3590:	
+l3598:	
 	movlw	low(((STR_7)|8000h))
 	movwf	(strcpy@src)
 	movlw	high(((STR_7)|8000h))
@@ -3421,31 +3419,31 @@ l3590:
 	movwf	(log_car_event@speed)
 	fcall	_log_car_event
 	line	69
-	goto	l3716
+	goto	l3724
 	line	70
 	
-l3592:	
+l3600:	
 		movlw	61
 	xorwf	((main@key)^080h),w
 	btfss	status,2
-	goto	u3491
-	goto	u3490
-u3491:
-	goto	l3600
-u3490:
+	goto	u3461
+	goto	u3460
+u3461:
+	goto	l3608
+u3460:
 	
-l3594:	
+l3602:	
 	movlw	low(06h)
 	subwf	(main@gr)^080h,w
 	skipnc
-	goto	u3501
-	goto	u3500
-u3501:
-	goto	l3600
-u3500:
+	goto	u3471
+	goto	u3470
+u3471:
+	goto	l3608
+u3470:
 	line	72
 	
-l3596:	
+l3604:	
 	movf	(main@gr)^080h,w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3479,7 +3477,7 @@ l3596:
 	fcall	_log_car_event
 	line	74
 	
-l3598:	
+l3606:	
 	movlw	low(01h)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3489,35 +3487,35 @@ l3598:
 	bcf	status, 6	;RP1=0, select bank1
 	addwf	(main@gr)^080h,f
 	line	75
-	goto	l3716
+	goto	l3724
 	line	76
 	
-l3600:	
+l3608:	
 		movlw	59
 	xorwf	((main@key)^080h),w
 	btfss	status,2
-	goto	u3511
-	goto	u3510
-u3511:
-	goto	l3610
-u3510:
+	goto	u3481
+	goto	u3480
+u3481:
+	goto	l3618
+u3480:
 	
-l3602:	
+l3610:	
 	movf	((main@gr)^080h),w
 	btfsc	status,2
-	goto	u3521
-	goto	u3520
-u3521:
-	goto	l3610
-u3520:
+	goto	u3491
+	goto	u3490
+u3491:
+	goto	l3618
+u3490:
 	line	78
 	
-l3604:	
+l3612:	
 	movlw	01h
 	subwf	(main@gr)^080h,f
 	line	79
 	
-l3606:	
+l3614:	
 	movf	(main@gr)^080h,w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3537,7 +3535,7 @@ l3606:
 	fcall	_strcpy
 	line	80
 	
-l3608:	
+l3616:	
 	movlw	(low(main@event|((0x0)<<8))&0ffh)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3552,45 +3550,45 @@ l3608:
 	movwf	(log_car_event@speed)
 	fcall	_log_car_event
 	line	81
-	goto	l3716
+	goto	l3724
 	line	82
 	
-l3610:	
+l3618:	
 		movlw	2
 	xorwf	((main@control_flag)^080h),w
 	btfss	status,2
-	goto	u3531
-	goto	u3530
-u3531:
-	goto	l3632
-u3530:
+	goto	u3501
+	goto	u3500
+u3501:
+	goto	l3640
+u3500:
 	
-l3612:	
+l3620:	
 		movlw	55
 	xorwf	((main@key)^080h),w
 	btfsc	status,2
-	goto	u3541
-	goto	u3540
-u3541:
-	goto	l3616
-u3540:
+	goto	u3511
+	goto	u3510
+u3511:
+	goto	l3624
+u3510:
 	
-l3614:	
+l3622:	
 		movlw	47
 	xorwf	((main@key)^080h),w
 	btfss	status,2
-	goto	u3551
-	goto	u3550
-u3551:
-	goto	l3632
-u3550:
+	goto	u3521
+	goto	u3520
+u3521:
+	goto	l3640
+u3520:
 	line	84
 	
-l3616:	
+l3624:	
 	fcall	_clear_screen
 	line	85
 	
-l3618:	
+l3626:	
 	movlw	low(((STR_8)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_8)|8000h))
@@ -3600,80 +3598,80 @@ l3618:
 	fcall	_clcd_print
 	line	86
 	
-l3620:	
+l3628:	
 	clrf	(clcd_write@mode)
 	movlw	low(0C6h)
 	fcall	_clcd_write
 	line	87
 	
-l3622:	
+l3630:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Fh)
 	fcall	_clcd_write
 	line	88
 	
-l3624:	
+l3632:	
 	asmopt push
 asmopt off
 	movlw	165
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 movwf	((??_main+0)+0)
-	u3597:
+	u3567:
 decfsz	(??_main+0)+0,f
-	goto	u3597
+	goto	u3567
 	nop2
 asmopt pop
 
 	line	89
 	
-l3626:	
+l3634:	
 	movlw	low(04h)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@control_flag)^080h
 	line	90
 	
-l3628:	
+l3636:	
 	movlw	low(011h)
 	movwf	(main@reset_flag)^080h
 	line	91
 	
-l3630:	
+l3638:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bsf	(146/8),(146)&7	;volatile
 	line	92
-	goto	l3716
+	goto	l3724
 	line	93
 	
-l3632:	
+l3640:	
 		movlw	6
 	xorwf	((main@control_flag)^080h),w
 	btfss	status,2
-	goto	u3561
-	goto	u3560
-u3561:
-	goto	l3716
-u3560:
+	goto	u3531
+	goto	u3530
+u3531:
+	goto	l3724
+u3530:
 	
-l3634:	
+l3642:	
 		movlw	31
 	xorwf	((main@key)^080h),w
 	btfss	status,2
-	goto	u3571
-	goto	u3570
-u3571:
-	goto	l3716
-u3570:
-	goto	l3664
+	goto	u3541
+	goto	u3540
+u3541:
+	goto	l3724
+u3540:
+	goto	l3672
 	line	98
 	
-l3638:	
+l3646:	
 	fcall	_clear_screen
 	line	99
 	
-l3640:	
+l3648:	
 	movlw	low(((STR_9)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_9)|8000h))
@@ -3683,21 +3681,21 @@ l3640:
 	fcall	_clcd_print
 	line	100
 	
-l3642:	
+l3650:	
 	movlw	low(08h)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@control_flag)^080h
 	line	101
 	
-l3644:	
+l3652:	
 	movlw	low(015h)
 	movwf	(main@reset_flag)^080h
 	line	102
-	goto	l3716
+	goto	l3724
 	line	104
 	
-l3646:	
+l3654:	
 	movlw	low(((STR_10)|8000h))
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3713,25 +3711,25 @@ l3646:
 	fcall	_log_car_event
 	line	105
 	
-l3648:	
+l3656:	
 	fcall	_clear_screen
 	line	106
 	
-l3650:	
+l3658:	
 	movlw	low(0Ah)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@control_flag)^080h
 	line	107
 	
-l3652:	
+l3660:	
 	movlw	low(017h)
 	movwf	(main@reset_flag)^080h
 	line	108
-	goto	l3716
+	goto	l3724
 	line	110
 	
-l3654:	
+l3662:	
 	movlw	low(((STR_11)|8000h))
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3747,25 +3745,25 @@ l3654:
 	fcall	_log_car_event
 	line	111
 	
-l3656:	
+l3664:	
 	fcall	_clear_screen
 	line	112
 	
-l3658:	
+l3666:	
 	movlw	low(0Bh)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@control_flag)^080h
 	line	113
 	
-l3660:	
+l3668:	
 	movlw	low(019h)
 	movwf	(main@reset_flag)^080h
 	line	114
-	goto	l3716
+	goto	l3724
 	line	115
 	
-l3664:	
+l3672:	
 	movf	(main@menu_pos)^080h,w
 	; Switch size 1, requested type "simple"
 ; Number of cases is 3, Range of values is 0 to 2
@@ -3780,23 +3778,23 @@ l3664:
 	asmopt off
 	xorlw	0^0	; case 0
 	skipnz
-	goto	l3638
+	goto	l3646
 	xorlw	1^0	; case 1
 	skipnz
-	goto	l3646
+	goto	l3654
 	xorlw	2^1	; case 2
 	skipnz
-	goto	l3654
+	goto	l3662
 	goto	l70
 	asmopt pop
 
 	line	116
 	
 l70:	
-	goto	l3716
+	goto	l3724
 	line	121
 	
-l3666:	
+l3674:	
 	movf	(main@speed)^080h,w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3804,46 +3802,46 @@ l3666:
 	movlw	(low(main@event|((0x0)<<8)))&0ffh
 	fcall	_display_dash_board
 	line	122
-	goto	l3718
+	goto	l3726
 	line	127
 	
-l3668:	
+l3676:	
 	movlw	low(02h)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@control_flag)^080h
 	line	128
 	
-l3670:	
+l3678:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bcf	(146/8),(146)&7	;volatile
 	line	129
 	
-l3672:	
+l3680:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Ch)
 	fcall	_clcd_write
 	line	130
 	
-l3674:	
+l3682:	
 	asmopt push
 asmopt off
 	movlw	165
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 movwf	((??_main+0)+0)
-	u3607:
+	u3577:
 decfsz	(??_main+0)+0,f
-	goto	u3607
+	goto	u3577
 	nop2
 asmopt pop
 
 	line	131
-	goto	l3718
+	goto	l3726
 	line	133
 	
-l3676:	
+l3684:	
 	movlw	low(06h)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
@@ -3853,11 +3851,11 @@ l3676:
 	movwf	(main@reset_flag)^080h
 	line	135
 	
-l3678:	
+l3686:	
 	fcall	_clear_screen
 	line	136
 	
-l3680:	
+l3688:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Ch)
 	fcall	_clcd_write
@@ -3868,23 +3866,23 @@ asmopt off
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 movwf	((??_main+0)+0)
-	u3617:
+	u3587:
 decfsz	(??_main+0)+0,f
-	goto	u3617
+	goto	u3587
 	nop2
 asmopt pop
 
 	line	138
 	
-l3682:	
+l3690:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bcf	(146/8),(146)&7	;volatile
 	line	139
-	goto	l3576
+	goto	l3584
 	line	140
 	
-l3686:	
+l3694:	
 	movf	(main@reset_flag)^080h,w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3906,16 +3904,16 @@ l3686:
 	asmopt off
 	xorlw	2^0	; case 2
 	skipnz
-	goto	l3668
+	goto	l3676
 	xorlw	17^2	; case 17
 	skipnz
-	goto	l3676
-	goto	l3718
+	goto	l3684
+	goto	l3726
 	asmopt pop
 
 	line	143
 	
-l3688:	
+l3696:	
 	movf	(main@reset_flag)^080h,w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3928,10 +3926,10 @@ l3688:
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@menu_pos)^080h
 	line	144
-	goto	l3718
+	goto	l3726
 	line	146
 	
-l3690:	
+l3698:	
 	movf	(main@reset_flag)^080h,w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -3941,40 +3939,40 @@ l3690:
 	movf	(main@key)^080h,w
 	fcall	_view_log
 	line	147
-	goto	l3718
+	goto	l3726
 	line	149
 	
-l3692:	
+l3700:	
 	movf	(main@reset_flag)^080h,w
 	fcall	_clear_log
 	xorlw	011h
 	skipz
-	goto	u3581
-	goto	u3580
-u3581:
-	goto	l3718
-u3580:
+	goto	u3551
+	goto	u3550
+u3551:
+	goto	l3726
+u3550:
 	line	151
 	
-l3694:	
+l3702:	
 	fcall	_clear_screen
 	line	152
 	
-l3696:	
+l3704:	
 	movlw	low(06h)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@control_flag)^080h
 	line	153
 	
-l3698:	
+l3706:	
 	movlw	low(013h)
 	movwf	(main@reset_flag)^080h
 	line	154
-	goto	l3576
+	goto	l3584
 	line	161
 	
-l3700:	
+l3708:	
 	fcall	_clear_screen
 	line	162
 	clrf	(clcd_write@mode)
@@ -3982,23 +3980,23 @@ l3700:
 	fcall	_clcd_write
 	line	163
 	
-l3702:	
+l3710:	
 	asmopt push
 asmopt off
 	movlw	165
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 movwf	((??_main+0)+0)
-	u3627:
+	u3597:
 decfsz	(??_main+0)+0,f
-	goto	u3627
+	goto	u3597
 	nop2
 asmopt pop
 
-	goto	l3696
+	goto	l3704
 	line	168
 	
-l3712:	
+l3720:	
 	movf	(main@reset_flag)^080h,w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -4020,13 +4018,13 @@ l3712:
 	asmopt off
 	xorlw	17^0	; case 17
 	skipnz
-	goto	l3700
-	goto	l3718
+	goto	l3708
+	goto	l3726
 	asmopt pop
 
 	line	171
 	
-l3716:	
+l3724:	
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movf	(main@control_flag)^080h,w
@@ -4043,33 +4041,33 @@ l3716:
 	asmopt off
 	xorlw	2^0	; case 2
 	skipnz
-	goto	l3666
+	goto	l3674
 	xorlw	4^2	; case 4
 	skipnz
-	goto	l3686
+	goto	l3694
 	xorlw	6^4	; case 6
 	skipnz
-	goto	l3688
+	goto	l3696
 	xorlw	8^6	; case 8
 	skipnz
-	goto	l3690
+	goto	l3698
 	xorlw	10^8	; case 10
 	skipnz
-	goto	l3692
+	goto	l3700
 	xorlw	11^10	; case 11
 	skipnz
-	goto	l3712
-	goto	l3718
+	goto	l3720
+	goto	l3726
 	asmopt pop
 
 	line	172
 	
-l3718:	
+l3726:	
 	movlw	low(0FFh)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(main@reset_flag)^080h
-	goto	l3576
+	goto	l3584
 	global	start
 	ljmp	start
 	callstack 0
@@ -4134,20 +4132,20 @@ _view_log:
 	movwf	(view_log@key)
 	line	217
 	
-l3388:	
+l3396:	
 		incf	((_event_count)),w
 	skipz
-	goto	u3211
+	goto	u3181
 	incf	((_event_count+1)),w
 	btfss	status,2
-	goto	u3211
-	goto	u3210
-u3211:
-	goto	l3392
-u3210:
+	goto	u3181
+	goto	u3180
+u3181:
+	goto	l3400
+u3180:
 	line	219
 	
-l3390:	
+l3398:	
 	movlw	low(((STR_21)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_21)|8000h))
@@ -4156,35 +4154,35 @@ l3390:
 	movwf	(clcd_print@addr)
 	fcall	_clcd_print
 	line	220
-	goto	l389
+	goto	l385
 	line	223
 	
-l3392:	
+l3400:	
 		movlw	21
 	xorwf	((view_log@reset_flag)),w
 	btfss	status,2
-	goto	u3221
-	goto	u3220
-u3221:
-	goto	l3396
-u3220:
+	goto	u3191
+	goto	u3190
+u3191:
+	goto	l3404
+u3190:
 	line	225
 	
-l3394:	
+l3402:	
 	clrf	(view_log@rpos)
 	line	227
 	
-l3396:	
+l3404:	
 		movlw	47
 	xorwf	((view_log@key)),w
 	btfss	status,2
-	goto	u3231
-	goto	u3230
-u3231:
-	goto	l3402
-u3230:
+	goto	u3201
+	goto	u3200
+u3201:
+	goto	l3410
+u3200:
 	
-l3398:	
+l3406:	
 	movf	(_event_count),w
 	addlw	low(-1)
 	movwf	(??_view_log+0)+0
@@ -4197,20 +4195,20 @@ l3398:
 	xorlw	80h
 	sublw	080h
 	skipz
-	goto	u3245
+	goto	u3215
 	movf	0+(??_view_log+0)+0,w
 	subwf	(view_log@rpos),w
-u3245:
+u3215:
 
 	skipnc
-	goto	u3241
-	goto	u3240
-u3241:
-	goto	l3402
-u3240:
+	goto	u3211
+	goto	u3210
+u3211:
+	goto	l3410
+u3210:
 	line	229
 	
-l3400:	
+l3408:	
 	movlw	low(01h)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -4218,42 +4216,42 @@ l3400:
 	movf	(??_view_log+0)+0,w
 	addwf	(view_log@rpos),f
 	line	230
-	goto	l3408
+	goto	l3416
 	line	231
 	
-l3402:	
+l3410:	
 		movlw	55
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	xorwf	((view_log@key)),w
 	btfss	status,2
-	goto	u3251
-	goto	u3250
-u3251:
-	goto	l3408
-u3250:
+	goto	u3221
+	goto	u3220
+u3221:
+	goto	l3416
+u3220:
 	
-l3404:	
+l3412:	
 	movf	((view_log@rpos)),w
 	btfsc	status,2
-	goto	u3261
-	goto	u3260
-u3261:
-	goto	l3408
-u3260:
+	goto	u3231
+	goto	u3230
+u3231:
+	goto	l3416
+u3230:
 	line	233
 	
-l3406:	
+l3414:	
 	movlw	01h
 	subwf	(view_log@rpos),f
 	line	235
 	
-l3408:	
+l3416:	
 	clrf	(view_log@i)
 	clrf	(view_log@i+1)
 	line	237
 	
-l3414:	
+l3422:	
 	movlw	low(0Ah)
 	movwf	(___bmul@multiplicand)
 	bcf	status, 5	;RP0=0, select bank0
@@ -4266,7 +4264,7 @@ l3414:
 	movwf	(view_log@add)
 	line	238
 	
-l3416:	
+l3424:	
 	movf	(view_log@i),w
 	addlw	low(view_log@rlog|((0x0)<<8))&0ffh
 	movwf	fsr0
@@ -4277,7 +4275,7 @@ l3416:
 	movwf	indf
 	line	239
 	
-l3418:	
+l3426:	
 	movlw	01h
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -4287,27 +4285,27 @@ l3418:
 	movlw	0
 	addwf	(view_log@i+1),f
 	
-l3420:	
+l3428:	
 	movf	(view_log@i+1),w
 	xorlw	80h
 	movwf	btemp+1
 	movlw	(0)^80h
 	subwf	btemp+1,w
 	skipz
-	goto	u3275
+	goto	u3245
 	movlw	0Ah
 	subwf	(view_log@i),w
-u3275:
+u3245:
 
 	skipc
-	goto	u3271
-	goto	u3270
-u3271:
-	goto	l3414
-u3270:
+	goto	u3241
+	goto	u3240
+u3241:
+	goto	l3422
+u3240:
 	line	241
 	
-l3422:	
+l3430:	
 	movlw	low(0C0h)
 	movwf	(clcd_putch@addr)
 	movlw	0Ah
@@ -4409,7 +4407,7 @@ l3422:
 	fcall	_clcd_putch
 	line	260
 	
-l389:	
+l385:	
 	return
 	callstack 0
 GLOBAL	__end_of_view_log
@@ -4469,12 +4467,12 @@ _strcpy:
 	movwf	(strcpy@dest)
 	line	5
 	
-l3228:	
+l3236:	
 	movf	(strcpy@dest),w
 	movwf	(strcpy@d)
 	line	6
 	
-l3230:	
+l3238:	
 	movf	(strcpy@src+1),w
 	movwf	(??_strcpy+0)+0+1
 	movf	(strcpy@src),w
@@ -4499,14 +4497,14 @@ l3230:
 	movwf	indf
 	movf	((indf)),w
 	btfss	status,2
-	goto	u3021
-	goto	u3020
-u3021:
-	goto	l3230
-u3020:
+	goto	u2991
+	goto	u2990
+u2991:
+	goto	l3238
+u2990:
 	line	8
 	
-l999:	
+l995:	
 	return
 	callstack 0
 GLOBAL	__end_of_strcpy
@@ -4559,25 +4557,25 @@ _read_digital_keypad:
 	movwf	(read_digital_keypad@mode)
 	line	15
 	
-l3200:	
+l3208:	
 	movf	((read_digital_keypad@mode)),w
 	btfss	status,2
-	goto	u2981
-	goto	u2980
-u2981:
-	goto	l3208
-u2980:
+	goto	u2951
+	goto	u2950
+u2951:
+	goto	l3216
+u2950:
 	line	17
 	
-l3202:	
+l3210:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(6),w	;volatile
 	andlw	03Fh
-	goto	l248
+	goto	l244
 	line	21
 	
-l3208:	
+l3216:	
 	movlw	low(03Fh)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -4586,51 +4584,51 @@ l3208:
 		movlw	63
 	xorwf	((??_read_digital_keypad+0)+0),w
 	btfsc	status,2
-	goto	u2991
-	goto	u2990
-u2991:
-	goto	l3220
-u2990:
+	goto	u2961
+	goto	u2960
+u2961:
+	goto	l3228
+u2960:
 	
-l3210:	
+l3218:	
 	movf	((read_digital_keypad@once)),w
 	btfsc	status,2
-	goto	u3001
-	goto	u3000
-u3001:
-	goto	l3220
-u3000:
+	goto	u2971
+	goto	u2970
+u2971:
+	goto	l3228
+u2970:
 	line	23
 	
-l3212:	
+l3220:	
 	clrf	(read_digital_keypad@once)
-	goto	l3202
+	goto	l3210
 	line	27
 	
-l3220:	
+l3228:	
 	movlw	low(03Fh)
 	andwf	(6),w	;volatile
 	movwf	(??_read_digital_keypad+0)+0
 		movlw	63
 	xorwf	((??_read_digital_keypad+0)+0),w
 	btfss	status,2
-	goto	u3011
-	goto	u3010
-u3011:
-	goto	l3224
-u3010:
+	goto	u2981
+	goto	u2980
+u2981:
+	goto	l3232
+u2980:
 	line	29
 	
-l3222:	
+l3230:	
 	clrf	(read_digital_keypad@once)
 	incf	(read_digital_keypad@once),f
 	line	33
 	
-l3224:	
+l3232:	
 	movlw	low(03Fh)
 	line	34
 	
-l248:	
+l244:	
 	return
 	callstack 0
 GLOBAL	__end_of_read_digital_keypad
@@ -4682,22 +4680,22 @@ _read_adc:
 ; Regs used in _read_adc: [wreg]
 	line	24
 	
-l3194:	
+l3202:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bsf	(250/8),(250)&7	;volatile
 	line	27
 	
-l232:	
+l228:	
 	btfsc	(250/8),(250)&7	;volatile
-	goto	u2971
-	goto	u2970
-u2971:
-	goto	l232
-u2970:
+	goto	u2941
+	goto	u2940
+u2941:
+	goto	l228
+u2940:
 	line	29
 	
-l3196:	
+l3204:	
 	movf	(30),w	;volatile
 	movwf	(read_adc@adc_reg_val+1)
 	bsf	status, 5	;RP0=1, select bank1
@@ -4711,7 +4709,7 @@ l3196:
 	movwf	(?_read_adc)
 	line	33
 	
-l235:	
+l231:	
 	return
 	callstack 0
 GLOBAL	__end_of_read_adc
@@ -4769,102 +4767,102 @@ _login_menu:
 	movwf	(login_menu@key)
 	line	183
 	
-l3350:	
+l3358:	
 		movlw	19
 	xorwf	((login_menu@reset_flag)),w
 	btfss	status,2
-	goto	u3141
-	goto	u3140
-u3141:
-	goto	l3354
-u3140:
+	goto	u3111
+	goto	u3110
+u3111:
+	goto	l3362
+u3110:
 	line	185
 	
-l3352:	
+l3360:	
 	clrf	(login_menu@menu_pos)
 	line	187
 	
-l3354:	
+l3362:	
 		movlw	47
 	xorwf	((login_menu@key)),w
 	btfss	status,2
-	goto	u3151
-	goto	u3150
-u3151:
-	goto	l3362
-u3150:
+	goto	u3121
+	goto	u3120
+u3121:
+	goto	l3370
+u3120:
 	
-l3356:	
+l3364:	
 	movlw	low(02h)
 	subwf	(login_menu@menu_pos),w
 	skipnc
-	goto	u3161
-	goto	u3160
-u3161:
-	goto	l3362
-u3160:
+	goto	u3131
+	goto	u3130
+u3131:
+	goto	l3370
+u3130:
 	line	189
 	
-l3358:	
+l3366:	
 	movlw	low(01h)
 	movwf	(??_login_menu+0)+0
 	movf	(??_login_menu+0)+0,w
 	addwf	(login_menu@menu_pos),f
 	line	190
 	
-l3360:	
+l3368:	
 	fcall	_clear_screen
 	line	191
-	goto	l3370
+	goto	l3378
 	line	192
 	
-l3362:	
+l3370:	
 		movlw	55
 	xorwf	((login_menu@key)),w
 	btfss	status,2
-	goto	u3171
-	goto	u3170
-u3171:
-	goto	l3370
-u3170:
+	goto	u3141
+	goto	u3140
+u3141:
+	goto	l3378
+u3140:
 	
-l3364:	
+l3372:	
 	movf	((login_menu@menu_pos)),w
 	btfsc	status,2
-	goto	u3181
-	goto	u3180
-u3181:
-	goto	l3370
-u3180:
+	goto	u3151
+	goto	u3150
+u3151:
+	goto	l3378
+u3150:
 	line	194
 	
-l3366:	
+l3374:	
 	movlw	01h
 	subwf	(login_menu@menu_pos),f
-	goto	l3360
+	goto	l3368
 	line	197
 	
-l3370:	
+l3378:	
 	movlw	low(02h)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	subwf	(login_menu@menu_pos),w
 	skipnc
-	goto	u3191
-	goto	u3190
-u3191:
-	goto	l3378
-u3190:
+	goto	u3161
+	goto	u3160
+u3161:
+	goto	l3386
+u3160:
 	line	199
 	
-l3372:	
+l3380:	
 	movlw	low(080h)
 	movwf	(clcd_putch@addr)
 	movlw	low(02Ah)
 	fcall	_clcd_putch
 	line	200
 	
-l3374:	
+l3382:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(login_menu@menu_pos),w
@@ -4885,7 +4883,7 @@ l3374:
 	fcall	_clcd_print
 	line	201
 	
-l3376:	
+l3384:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(login_menu@menu_pos),w
@@ -4905,21 +4903,21 @@ l3376:
 	movwf	(clcd_print@addr)
 	fcall	_clcd_print
 	line	202
-	goto	l3384
+	goto	l3392
 	line	203
 	
-l3378:	
+l3386:	
 		movlw	2
 	xorwf	((login_menu@menu_pos)),w
 	btfss	status,2
-	goto	u3201
-	goto	u3200
-u3201:
-	goto	l3384
-u3200:
+	goto	u3171
+	goto	u3170
+u3171:
+	goto	l3392
+u3170:
 	line	205
 	
-l3380:	
+l3388:	
 	movf	(login_menu@menu_pos),w
 	movwf	(??_login_menu+0)+0
 	addwf	(??_login_menu+0)+0,w
@@ -4957,20 +4955,20 @@ l3380:
 	fcall	_clcd_print
 	line	207
 	
-l3382:	
+l3390:	
 	movlw	low(0C0h)
 	movwf	(clcd_putch@addr)
 	movlw	low(02Ah)
 	fcall	_clcd_putch
 	line	209
 	
-l3384:	
+l3392:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(login_menu@menu_pos),w
 	line	210
 	
-l376:	
+l372:	
 	return
 	callstack 0
 GLOBAL	__end_of_login_menu
@@ -5034,18 +5032,18 @@ _login:
 	movwf	(login@key)
 	line	102
 	
-l3238:	
+l3246:	
 		movlw	17
 	xorwf	((login@reset_flag)),w
 	btfss	status,2
-	goto	u3031
-	goto	u3030
-u3031:
-	goto	l3254
-u3030:
+	goto	u3001
+	goto	u3000
+u3001:
+	goto	l3262
+u3000:
 	line	104
 	
-l3240:	
+l3248:	
 	movlw	low(05h)
 	movwf	(_return_time)
 	line	105
@@ -5053,68 +5051,68 @@ l3240:
 	movwf	(login@attempt_rem)
 	line	106
 	
-l3242:	
+l3250:	
 	clrf	(login@i)
 	line	107
 	
-l3244:	
+l3252:	
 	clrf	(login@npassword)
 	line	108
 	
-l3246:	
+l3254:	
 	clrf	0+(login@npassword)+01h
 	line	109
 	
-l3248:	
+l3256:	
 	clrf	0+(login@npassword)+02h
 	line	110
 	
-l3250:	
+l3258:	
 	clrf	0+(login@npassword)+03h
 	line	111
 	
-l3252:	
+l3260:	
 	movlw	low(03Fh)
 	movwf	(login@key)
 	line	113
 	
-l3254:	
+l3262:	
 	movf	((_return_time)),w
 	btfss	status,2
-	goto	u3041
-	goto	u3040
-u3041:
-	goto	l3260
-u3040:
+	goto	u3011
+	goto	u3010
+u3011:
+	goto	l3268
+u3010:
 	line	115
 	
-l3256:	
+l3264:	
 	movlw	low(02h)
-	goto	l351
+	goto	l347
 	line	117
 	
-l3260:	
+l3268:	
 		movlw	55
 	xorwf	((login@key)),w
 	btfss	status,2
-	goto	u3051
-	goto	u3050
-u3051:
-	goto	l3272
-u3050:
+	goto	u3021
+	goto	u3020
+u3021:
+	goto	l3280
+u3020:
 	
-l3262:	
+l3270:	
 	movlw	low(04h)
 	subwf	(login@i),w
 	skipnc
-	goto	u3061
-	goto	u3060
-u3061:
-	goto	l3272
-u3060:
+	goto	u3031
+	goto	u3030
+u3031:
+	goto	l3280
+u3030:
 	line	119
 	
-l3264:	
+l3272:	
 	movf	(login@i),w
 	addlw	low(login@npassword|((0x0)<<8))&0ffh
 	movwf	fsr0
@@ -5123,7 +5121,7 @@ l3264:
 	movwf	indf
 	line	120
 	
-l3266:	
+l3274:	
 	movf	(login@i),w
 	addlw	0C6h
 	movwf	(clcd_putch@addr)
@@ -5131,7 +5129,7 @@ l3266:
 	fcall	_clcd_putch
 	line	121
 	
-l3268:	
+l3276:	
 	movlw	low(01h)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -5140,35 +5138,35 @@ l3268:
 	addwf	(login@i),f
 	line	122
 	
-l3270:	
+l3278:	
 	movlw	low(05h)
 	movwf	(_return_time)
 	line	123
-	goto	l3284
+	goto	l3292
 	line	124
 	
-l3272:	
+l3280:	
 		movlw	47
 	xorwf	((login@key)),w
 	btfss	status,2
-	goto	u3071
-	goto	u3070
-u3071:
-	goto	l3284
-u3070:
+	goto	u3041
+	goto	u3040
+u3041:
+	goto	l3292
+u3040:
 	
-l3274:	
+l3282:	
 	movlw	low(04h)
 	subwf	(login@i),w
 	skipnc
-	goto	u3081
-	goto	u3080
-u3081:
-	goto	l3284
-u3080:
+	goto	u3051
+	goto	u3050
+u3051:
+	goto	l3292
+u3050:
 	line	126
 	
-l3276:	
+l3284:	
 	movf	(login@i),w
 	addlw	low(login@npassword|((0x0)<<8))&0ffh
 	movwf	fsr0
@@ -5177,32 +5175,32 @@ l3276:
 	movwf	indf
 	line	127
 	
-l3278:	
+l3286:	
 	movf	(login@i),w
 	addlw	0C6h
 	movwf	(clcd_putch@addr)
 	movlw	low(02Ah)
 	fcall	_clcd_putch
-	goto	l3268
+	goto	l3276
 	line	131
 	
-l3284:	
+l3292:	
 		movlw	4
 	xorwf	((login@i)),w
 	btfss	status,2
-	goto	u3091
-	goto	u3090
-u3091:
-	goto	l3346
-u3090:
+	goto	u3061
+	goto	u3060
+u3061:
+	goto	l3354
+u3060:
 	line	133
 	
-l3286:	
+l3294:	
 	clrf	(login@j)
 	clrf	(login@j+1)
 	line	135
 	
-l3292:	
+l3300:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(login@j),w
@@ -5214,7 +5212,7 @@ l3292:
 	movwf	indf
 	line	136
 	
-l3294:	
+l3302:	
 	movlw	01h
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -5224,27 +5222,27 @@ l3294:
 	movlw	0
 	addwf	(login@j+1),f
 	
-l3296:	
+l3304:	
 	movf	(login@j+1),w
 	xorlw	80h
 	movwf	btemp+1
 	movlw	(0)^80h
 	subwf	btemp+1,w
 	skipz
-	goto	u3105
+	goto	u3075
 	movlw	04h
 	subwf	(login@j),w
-u3105:
+u3075:
 
 	skipc
-	goto	u3101
-	goto	u3100
-u3101:
-	goto	l3292
-u3100:
+	goto	u3071
+	goto	u3070
+u3071:
+	goto	l3300
+u3070:
 	line	137
 	
-l3298:	
+l3306:	
 	movlw	(low(login@spassword|((0x0)<<8)))&0ffh
 	movwf	(strncmp@r)
 	movlw	04h
@@ -5256,19 +5254,19 @@ l3298:
 	movf	((0+(?_strncmp))),w
 iorwf	((1+(?_strncmp))),w
 	btfss	status,2
-	goto	u3111
-	goto	u3110
-u3111:
-	goto	l3306
-u3110:
+	goto	u3081
+	goto	u3080
+u3081:
+	goto	l3314
+u3080:
 	line	140
 	
-l3300:	
+l3308:	
 	movlw	low(011h)
-	goto	l351
+	goto	l347
 	line	144
 	
-l3306:	
+l3314:	
 	movlw	01h
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -5277,35 +5275,35 @@ l3306:
 		movlw	48
 	xorwf	((login@attempt_rem)),w
 	btfss	status,2
-	goto	u3121
-	goto	u3120
-u3121:
-	goto	l3324
-u3120:
+	goto	u3091
+	goto	u3090
+u3091:
+	goto	l3332
+u3090:
 	line	147
 	
-l3308:	
+l3316:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Ch)
 	fcall	_clcd_write
 	line	148
 	
-l3310:	
+l3318:	
 	asmopt push
 asmopt off
 	movlw	165
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 movwf	((??_login+0)+0)
-	u3637:
+	u3607:
 decfsz	(??_login+0)+0,f
-	goto	u3637
+	goto	u3607
 	nop2
 asmopt pop
 
 	line	149
 	
-l3312:	
+l3320:	
 	movlw	low(((STR_16)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_16)|8000h))
@@ -5315,7 +5313,7 @@ l3312:
 	fcall	_clcd_print
 	line	150
 	
-l3314:	
+l3322:	
 	movlw	low(((STR_17)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_17)|8000h))
@@ -5325,16 +5323,16 @@ l3314:
 	fcall	_clcd_print
 	line	151
 	
-l3316:	
+l3324:	
 	movlw	low(03Ch)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movwf	(_sec)
 	line	152
-	goto	l3320
+	goto	l3328
 	line	154
 	
-l3318:	
+l3326:	
 	movlw	low(0CBh)
 	movwf	(clcd_putch@addr)
 	movlw	0Ah
@@ -5374,30 +5372,30 @@ l3318:
 	fcall	_clcd_putch
 	line	152
 	
-l3320:	
+l3328:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	((_sec)),w
 	btfss	status,2
-	goto	u3131
-	goto	u3130
-u3131:
-	goto	l3318
-u3130:
+	goto	u3101
+	goto	u3100
+u3101:
+	goto	l3326
+u3100:
 	line	157
 	
-l3322:	
+l3330:	
 	movlw	low(033h)
 	movwf	(login@attempt_rem)
 	line	158
-	goto	l3332
+	goto	l3340
 	line	161
 	
-l3324:	
+l3332:	
 	fcall	_clear_screen
 	line	163
 	
-l3326:	
+l3334:	
 	movlw	low(((STR_18)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_18)|8000h))
@@ -5407,7 +5405,7 @@ l3326:
 	fcall	_clcd_print
 	line	164
 	
-l3328:	
+l3336:	
 	movlw	low(0C0h)
 	movwf	(clcd_putch@addr)
 	bcf	status, 5	;RP0=0, select bank0
@@ -5424,7 +5422,7 @@ l3328:
 	fcall	_clcd_print
 	line	166
 	
-l3330:	
+l3338:	
 	asmopt push
 asmopt off
 movlw  77
@@ -5435,22 +5433,22 @@ movlw	25
 movwf	((??_login+0)+0+1)
 	movlw	79
 movwf	((??_login+0)+0)
-	u3647:
+	u3617:
 decfsz	((??_login+0)+0),f
-	goto	u3647
+	goto	u3617
 	decfsz	((??_login+0)+0+1),f
-	goto	u3647
+	goto	u3617
 	decfsz	((??_login+0)+0+2),f
-	goto	u3647
+	goto	u3617
 asmopt pop
 
 	line	168
 	
-l3332:	
+l3340:	
 	fcall	_clear_screen
 	line	169
 	
-l3334:	
+l3342:	
 	movlw	low(((STR_20)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_20)|8000h))
@@ -5460,49 +5458,49 @@ l3334:
 	fcall	_clcd_print
 	line	170
 	
-l3336:	
+l3344:	
 	clrf	(clcd_write@mode)
 	movlw	low(0C6h)
 	fcall	_clcd_write
 	line	171
 	
-l3338:	
+l3346:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Fh)
 	fcall	_clcd_write
 	line	172
 	
-l3340:	
+l3348:	
 	asmopt push
 asmopt off
 	movlw	165
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 movwf	((??_login+0)+0)
-	u3657:
+	u3627:
 decfsz	(??_login+0)+0,f
-	goto	u3657
+	goto	u3627
 	nop2
 asmopt pop
 
 	line	173
 	
-l3342:	
+l3350:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	clrf	(login@i)
 	line	174
 	
-l3344:	
+l3352:	
 	movlw	low(05h)
 	movwf	(_return_time)
 	line	177
 	
-l3346:	
+l3354:	
 	movlw	low(010h)
 	line	178
 	
-l351:	
+l347:	
 	return
 	callstack 0
 GLOBAL	__end_of_login
@@ -5556,7 +5554,7 @@ _eeprom_read:
 	movwf	(eeprom_read@addr)
 	line	8
 	
-l507:	
+l503:	
 	line	9
 # 9 "/opt/microchip/xc8/v2.46/pic/sources/c99/pic/__eeread.c"
 clrwdt ;# 
@@ -5564,14 +5562,14 @@ psect	text7
 	bsf	status, 5	;RP0=1, select bank3
 	bsf	status, 6	;RP1=1, select bank3
 	btfsc	(396)^0180h,1	;volsfr
-	goto	u2721
-	goto	u2720
-u2721:
-	goto	l507
-u2720:
+	goto	u2691
+	goto	u2690
+u2691:
+	goto	l503
+u2690:
 	line	18
 	
-l3070:	
+l3078:	
 	movf	(eeprom_read@addr),w
 	bcf	status, 5	;RP0=0, select bank2
 	bsf	status, 6	;RP1=1, select bank2
@@ -5588,7 +5586,7 @@ l3070:
 	movf	(268)^0100h,w	;volatile
 	line	19
 	
-l509:	
+l505:	
 	return
 	callstack 0
 GLOBAL	__end_of_eeprom_read
@@ -5646,11 +5644,11 @@ _log_car_event:
 ; Regs used in _log_car_event: [wreg-fsr0h+status,2+status,0+btemp+1+pclath+cstack]
 	line	82
 	
-l3184:	
+l3192:	
 	fcall	_get_time
 	line	83
 	
-l3186:	
+l3194:	
 	movlw	(low(_time|((0x0)<<8))&0ffh)
 	movwf	(strncpy@s)
 	movlw	(0x0)
@@ -5663,7 +5661,7 @@ l3186:
 	fcall	_strncpy
 	line	84
 	
-l3188:	
+l3196:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 		movf	(log_car_event@event),w
@@ -5719,15 +5717,15 @@ movf	(log_car_event@event+1),w
 	movwf	0+(_log)^080h+09h
 	line	87
 	
-l3190:	
+l3198:	
 	clrf	0+(_log)^080h+0Ah
 	line	88
 	
-l3192:	
+l3200:	
 	fcall	_log_event
 	line	89
 	
-l337:	
+l333:	
 	return
 	callstack 0
 GLOBAL	__end_of_log_car_event
@@ -5789,14 +5787,14 @@ _strncpy:
 	movwf	(strncpy@d)
 	line	6
 	
-l3054:	
+l3062:	
 	movf	(strncpy@d),w
 	movwf	(strncpy@cp)
 	line	7
-	goto	l3062
+	goto	l3070
 	line	8
 	
-l3056:	
+l3064:	
 	movlw	01h
 	subwf	(strncpy@n),f
 	movlw	0
@@ -5805,7 +5803,7 @@ l3056:
 	subwf	(strncpy@n+1),f
 	line	9
 	
-l3058:	
+l3066:	
 	movf	(strncpy@s+1),w
 	movwf	(??_strncpy+0)+0+1
 	movf	(strncpy@s),w
@@ -5828,40 +5826,40 @@ l3058:
 	movwf	indf
 	movf	((indf)),w
 	btfss	status,2
-	goto	u2691
-	goto	u2690
-u2691:
-	goto	l3062
-u2690:
-	goto	l3068
+	goto	u2661
+	goto	u2660
+u2661:
+	goto	l3070
+u2660:
+	goto	l3076
 	line	7
 	
-l3062:	
+l3070:	
 	movf	((strncpy@n)),w
 iorwf	((strncpy@n+1)),w
 	btfss	status,2
-	goto	u2701
-	goto	u2700
-u2701:
-	goto	l3056
-u2700:
-	goto	l3068
+	goto	u2671
+	goto	u2670
+u2671:
+	goto	l3064
+u2670:
+	goto	l3076
 	line	13
 	
-l3064:	
+l3072:	
 	movf	(strncpy@cp),w
 	movwf	fsr0
 	bcf	status, 7	;select IRP bank0
 	clrf	indf
 	
-l3066:	
+l3074:	
 	movlw	low(01h)
 	movwf	(??_strncpy+0)+0
 	movf	(??_strncpy+0)+0,w
 	addwf	(strncpy@cp),f
 	line	12
 	
-l3068:	
+l3076:	
 	movlw	01h
 	subwf	(strncpy@n),f
 	movlw	0
@@ -5870,17 +5868,17 @@ l3068:
 	subwf	(strncpy@n+1),f
 		incf	(((strncpy@n))),w
 	skipz
-	goto	u2711
+	goto	u2681
 	incf	(((strncpy@n+1))),w
 	btfss	status,2
-	goto	u2711
-	goto	u2710
-u2711:
-	goto	l3064
-u2710:
+	goto	u2681
+	goto	u2680
+u2681:
+	goto	l3072
+u2680:
 	line	15
 	
-l1018:	
+l1014:	
 	return
 	callstack 0
 GLOBAL	__end_of_strncpy
@@ -5934,7 +5932,7 @@ _log_event:
 ; Regs used in _log_event: [wreg-fsr0h+status,2+status,0+btemp+1+pclath+cstack]
 	line	65
 	
-l3034:	
+l3042:	
 	movlw	low(01h)
 	movwf	(??_log_event+0)+0
 	movf	(??_log_event+0)+0,w
@@ -5943,18 +5941,18 @@ l3034:
 		movlw	10
 	xorwf	((_pos)),w
 	btfss	status,2
-	goto	u2661
-	goto	u2660
-u2661:
-	goto	l3038
-u2660:
+	goto	u2631
+	goto	u2630
+u2631:
+	goto	l3046
+u2630:
 	line	68
 	
-l3036:	
+l3044:	
 	clrf	(_pos)
 	line	70
 	
-l3038:	
+l3046:	
 	movlw	low(0Ah)
 	movwf	(___bmul@multiplicand)
 	movf	(_pos),w
@@ -5963,13 +5961,13 @@ l3038:
 	movwf	(log_event@add)
 	line	71
 	
-l3040:	
+l3048:	
 	clrf	(log_event@i)
 	clrf	(log_event@i+1)
-	goto	l3048
+	goto	l3056
 	line	73
 	
-l3042:	
+l3050:	
 	movf	(log_event@i),w
 	addlw	low(_log|((0x0)<<8))&0ffh
 	movwf	fsr0
@@ -5979,14 +5977,14 @@ l3042:
 	fcall	_eeprom_write
 	line	74
 	
-l3044:	
+l3052:	
 	movlw	low(01h)
 	movwf	(??_log_event+0)+0
 	movf	(??_log_event+0)+0,w
 	addwf	(log_event@add),f
 	line	75
 	
-l3046:	
+l3054:	
 	movlw	01h
 	addwf	(log_event@i),f
 	skipnc
@@ -5994,21 +5992,21 @@ l3046:
 	movlw	0
 	addwf	(log_event@i+1),f
 	
-l3048:	
+l3056:	
 	movf	(log_event@i),w
 	addlw	low(_log|((0x0)<<8))&0ffh
 	movwf	fsr0
 	bcf	status, 7	;select IRP bank1
 	movf	(indf),w
 	btfss	status,2
-	goto	u2671
-	goto	u2670
-u2671:
-	goto	l3042
-u2670:
+	goto	u2641
+	goto	u2640
+u2641:
+	goto	l3050
+u2640:
 	line	76
 	
-l3050:	
+l3058:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(_event_count+1),w
@@ -6017,20 +6015,20 @@ l3050:
 	movlw	(0)^80h
 	subwf	btemp+1,w
 	skipz
-	goto	u2685
+	goto	u2655
 	movlw	09h
 	subwf	(_event_count),w
-u2685:
+u2655:
 
 	skipnc
-	goto	u2681
-	goto	u2680
-u2681:
-	goto	l334
-u2680:
+	goto	u2651
+	goto	u2650
+u2651:
+	goto	l330
+u2650:
 	line	77
 	
-l3052:	
+l3060:	
 	movlw	01h
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -6041,7 +6039,7 @@ l3052:
 	addwf	(_event_count+1),f
 	line	78
 	
-l334:	
+l330:	
 	return
 	callstack 0
 GLOBAL	__end_of_log_event
@@ -6097,51 +6095,51 @@ ___bmul:
 	movwf	(___bmul@multiplier)
 	line	6
 	
-l2944:	
+l2950:	
 	clrf	(___bmul@product)
 	line	43
 	
-l2946:	
+l2952:	
 	btfss	(___bmul@multiplier),(0)&7
-	goto	u2551
-	goto	u2550
-u2551:
-	goto	l2950
-u2550:
+	goto	u2521
+	goto	u2520
+u2521:
+	goto	l2956
+u2520:
 	line	44
 	
-l2948:	
+l2954:	
 	movf	(___bmul@multiplicand),w
 	movwf	(??___bmul+0)+0
 	movf	(??___bmul+0)+0,w
 	addwf	(___bmul@product),f
 	line	45
 	
-l2950:	
+l2956:	
 	clrc
 	rlf	(___bmul@multiplicand),f
 
 	line	46
 	
-l2952:	
+l2958:	
 	clrc
 	rrf	(___bmul@multiplier),f
 
 	line	47
 	movf	((___bmul@multiplier)),w
 	btfss	status,2
-	goto	u2561
-	goto	u2560
-u2561:
-	goto	l2946
-u2560:
+	goto	u2531
+	goto	u2530
+u2531:
+	goto	l2952
+u2530:
 	line	50
 	
-l2954:	
+l2960:	
 	movf	(___bmul@product),w
 	line	51
 	
-l563:	
+l559:	
 	return
 	callstack 0
 GLOBAL	__end_of___bmul
@@ -6198,7 +6196,7 @@ _init_config:
 ; Regs used in _init_config: [wreg+status,2+status,0+pclath+cstack]
 	line	31
 	
-l3178:	
+l3186:	
 	fcall	_init_adc
 	line	32
 	fcall	_init_clcd
@@ -6223,11 +6221,11 @@ l3178:
 	fcall	_init_timer2
 	line	37
 	
-l3180:	
+l3188:	
 	bsf	(94/8),(94)&7	;volatile
 	line	38
 	
-l3182:	
+l3190:	
 	bsf	(95/8),(95)&7	;volatile
 	line	39
 	
@@ -6283,7 +6281,7 @@ _init_timer2:
 ; Regs used in _init_timer2: [wreg]
 	line	8
 	
-l3012:	
+l3020:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bsf	(144/8),(144)&7	;volatile
@@ -6291,24 +6289,24 @@ l3012:
 	bsf	(145/8),(145)&7	;volatile
 	line	12
 	
-l3014:	
+l3022:	
 	movlw	low(0FAh)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(146)^080h	;volatile
 	line	15
 	
-l3016:	
+l3024:	
 	bsf	(1121/8)^080h,(1121)&7	;volatile
 	line	18
 	
-l3018:	
+l3026:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bcf	(146/8),(146)&7	;volatile
 	line	19
 	
-l283:	
+l279:	
 	return
 	callstack 0
 GLOBAL	__end_of_init_timer2
@@ -6318,7 +6316,7 @@ GLOBAL	__end_of_init_timer2
 
 ;; *************** function _init_i2c *****************
 ;; Defined at:
-;;		line 4 in file "i2c.c"
+;;		line 17 in file "i2c.c"
 ;; Parameters:    Size  Location     Type
 ;;  baud            4    6[BANK0 ] unsigned long 
 ;; Auto vars:     Size  Location     Type
@@ -6347,26 +6345,26 @@ GLOBAL	__end_of_init_timer2
 ;;
 psect	text14,local,class=CODE,delta=2,merge=1,group=0
 	file	"i2c.c"
-	line	4
+	line	17
 global __ptext14
 __ptext14:	;psect for function _init_i2c
 psect	text14
 	file	"i2c.c"
-	line	4
+	line	17
 	
 _init_i2c:	
 ;incstack = 0
 	callstack 4
 ; Regs used in _init_i2c: [wreg+status,2+status,0+pclath+cstack]
-	line	7
+	line	20
 	
-l2998:	
+l3004:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bsf	(163/8),(163)&7	;volatile
-	line	10
+	line	23
 	
-l3000:	
+l3006:	
 	movf	(init_i2c@baud),w
 	movwf	(??_init_i2c+0)+0
 	movf	(init_i2c@baud+1),w
@@ -6376,16 +6374,16 @@ l3000:
 	movf	(init_i2c@baud+3),w
 	movwf	((??_init_i2c+0)+0+3)
 	movlw	02h
-u2645:
+u2615:
 	clrc
 	rlf	(??_init_i2c+0)+0,f
 	rlf	(??_init_i2c+0)+1,f
 	rlf	(??_init_i2c+0)+2,f
 	rlf	(??_init_i2c+0)+3,f
-u2640:
+u2610:
 	addlw	-1
 	skipz
-	goto	u2645
+	goto	u2615
 	movf	3+(??_init_i2c+0)+0,w
 	movwf	(___lldiv@divisor+3)
 	movf	2+(??_init_i2c+0)+0,w
@@ -6410,15 +6408,19 @@ u2640:
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(147)^080h	;volatile
-	line	13
+	line	26
 	
-l3002:	
+l3008:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bsf	(165/8),(165)&7	;volatile
-	line	14
+	line	27
 	
-l160:	
+l3010:	
+	bcf	(99/8),(99)&7	;volatile
+	line	28
+	
+l166:	
 	return
 	callstack 0
 GLOBAL	__end_of_init_i2c
@@ -6472,7 +6474,7 @@ ___lldiv:
 ; Regs used in ___lldiv: [wreg+status,2+status,0]
 	line	13
 	
-l2958:	
+l2964:	
 	movlw	high highword(0)
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -6490,31 +6492,31 @@ l2958:
 	iorwf	(___lldiv@divisor+1),w
 	iorwf	(___lldiv@divisor),w
 	skipnz
-	goto	u2571
-	goto	u2570
-u2571:
-	goto	l2978
-u2570:
+	goto	u2541
+	goto	u2540
+u2541:
+	goto	l2984
+u2540:
 	line	15
 	
-l2960:	
+l2966:	
 	clrf	(___lldiv@counter)
 	incf	(___lldiv@counter),f
 	line	16
-	goto	l2964
+	goto	l2970
 	line	17
 	
-l2962:	
+l2968:	
 	movlw	01h
 	movwf	(??___lldiv+0)+0
-u2585:
+u2555:
 	clrc
 	rlf	(___lldiv@divisor),f
 	rlf	(___lldiv@divisor+1),f
 	rlf	(___lldiv@divisor+2),f
 	rlf	(___lldiv@divisor+3),f
 	decfsz	(??___lldiv+0)+0
-	goto	u2585
+	goto	u2555
 	line	18
 	movlw	low(01h)
 	movwf	(??___lldiv+0)+0
@@ -6522,53 +6524,53 @@ u2585:
 	addwf	(___lldiv@counter),f
 	line	16
 	
-l2964:	
+l2970:	
 	btfss	(___lldiv@divisor+3),(31)&7
-	goto	u2591
-	goto	u2590
-u2591:
-	goto	l2962
-u2590:
+	goto	u2561
+	goto	u2560
+u2561:
+	goto	l2968
+u2560:
 	line	21
 	
-l2966:	
+l2972:	
 	movlw	01h
 	movwf	(??___lldiv+0)+0
-u2605:
+u2575:
 	clrc
 	rlf	(___lldiv@quotient),f
 	rlf	(___lldiv@quotient+1),f
 	rlf	(___lldiv@quotient+2),f
 	rlf	(___lldiv@quotient+3),f
 	decfsz	(??___lldiv+0)+0
-	goto	u2605
+	goto	u2575
 	line	22
 	
-l2968:	
+l2974:	
 	movf	(___lldiv@divisor+3),w
 	subwf	(___lldiv@dividend+3),w
 	skipz
-	goto	u2615
+	goto	u2585
 	movf	(___lldiv@divisor+2),w
 	subwf	(___lldiv@dividend+2),w
 	skipz
-	goto	u2615
+	goto	u2585
 	movf	(___lldiv@divisor+1),w
 	subwf	(___lldiv@dividend+1),w
 	skipz
-	goto	u2615
+	goto	u2585
 	movf	(___lldiv@divisor),w
 	subwf	(___lldiv@dividend),w
-u2615:
+u2585:
 	skipc
-	goto	u2611
-	goto	u2610
-u2611:
-	goto	l2974
-u2610:
+	goto	u2581
+	goto	u2580
+u2581:
+	goto	l2980
+u2580:
 	line	23
 	
-l2970:	
+l2976:	
 	movf	(___lldiv@divisor),w
 	subwf	(___lldiv@dividend),f
 	movf	(___lldiv@divisor+1),w
@@ -6585,13 +6587,13 @@ l2970:
 	subwf	(___lldiv@dividend+3),f
 	line	24
 	
-l2972:	
+l2978:	
 	bsf	(___lldiv@quotient)+(0/8),(0)&7
 	line	26
 	
-l2974:	
+l2980:	
 	movlw	01h
-u2625:
+u2595:
 	clrc
 	rrf	(___lldiv@divisor+3),f
 	rrf	(___lldiv@divisor+2),f
@@ -6599,22 +6601,22 @@ u2625:
 	rrf	(___lldiv@divisor),f
 	addlw	-1
 	skipz
-	goto	u2625
+	goto	u2595
 
 	line	27
 	
-l2976:	
+l2982:	
 	movlw	01h
 	subwf	(___lldiv@counter),f
 	btfss	status,2
-	goto	u2631
-	goto	u2630
-u2631:
-	goto	l2966
-u2630:
+	goto	u2601
+	goto	u2600
+u2601:
+	goto	l2972
+u2600:
 	line	29
 	
-l2978:	
+l2984:	
 	movf	(___lldiv@quotient+3),w
 	movwf	(?___lldiv+3)
 	movf	(___lldiv@quotient+2),w
@@ -6626,7 +6628,7 @@ l2978:
 
 	line	30
 	
-l573:	
+l569:	
 	return
 	callstack 0
 GLOBAL	__end_of___lldiv
@@ -6679,26 +6681,26 @@ _init_ds1307:
 ; Regs used in _init_ds1307: [wreg+status,2+status,0+pclath+cstack]
 	line	9
 	
-l3004:	
+l3012:	
 	movlw	low(0)
 	fcall	_read_ds1307
 	movwf	(init_ds1307@dummy)
 	line	10
 	
-l3006:	
+l3014:	
 	movf	(init_ds1307@dummy),w
 	andlw	07Fh
 	movwf	(init_ds1307@dummy)
 	line	11
 	
-l3008:	
+l3016:	
 	movf	(init_ds1307@dummy),w
 	movwf	(write_ds1307@data)
 	movlw	low(0)
 	fcall	_write_ds1307
 	line	12
 	
-l204:	
+l200:	
 	return
 	callstack 0
 GLOBAL	__end_of_init_ds1307
@@ -6753,7 +6755,7 @@ _write_ds1307:
 	movwf	(write_ds1307@addr)
 	line	31
 	
-l2926:	
+l2932:	
 	fcall	_i2c_start
 	line	32
 	movlw	low(0D0h)
@@ -6768,7 +6770,7 @@ l2926:
 	fcall	_i2c_stop
 	line	36
 	
-l210:	
+l206:	
 	return
 	callstack 0
 GLOBAL	__end_of_write_ds1307
@@ -6820,7 +6822,7 @@ _init_digital_keypad:
 ; Regs used in _init_digital_keypad: [wreg+status,2]
 	line	7
 	
-l3010:	
+l3018:	
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movf	(134)^080h,w	;volatile
@@ -6828,7 +6830,7 @@ l3010:
 	movwf	(134)^080h	;volatile
 	line	9
 	
-l242:	
+l238:	
 	return
 	callstack 0
 GLOBAL	__end_of_init_digital_keypad
@@ -6880,21 +6882,21 @@ _init_clcd:
 ; Regs used in _init_clcd: [wreg+status,2+status,0+pclath+cstack]
 	line	42
 	
-l2990:	
+l2996:	
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	clrf	(136)^080h	;volatile
 	line	45
 	
-l2992:	
+l2998:	
 	bcf	(1098/8)^080h,(1098)&7	;volatile
 	line	46
 	
-l2994:	
+l3000:	
 	bcf	(1097/8)^080h,(1097)&7	;volatile
 	line	48
 	
-l2996:	
+l3002:	
 	fcall	_init_display_controller
 	line	49
 	
@@ -6949,40 +6951,40 @@ _init_display_controller:
 ; Regs used in _init_display_controller: [wreg+status,2+status,0+pclath+cstack]
 	line	19
 	
-l2904:	
+l2910:	
 	asmopt push
 asmopt off
 movlw	195
 movwf	((??_init_display_controller+0)+0+1)
 	movlw	205
 movwf	((??_init_display_controller+0)+0)
-	u3667:
+	u3637:
 decfsz	((??_init_display_controller+0)+0),f
-	goto	u3667
+	goto	u3637
 	decfsz	((??_init_display_controller+0)+0+1),f
-	goto	u3667
+	goto	u3637
 asmopt pop
 
 	line	22
 	
-l2906:	
+l2912:	
 	clrf	(clcd_write@mode)
 	movlw	low(033h)
 	fcall	_clcd_write
 	line	23
 	
-l2908:	
+l2914:	
 	asmopt push
 asmopt off
 movlw	27
 movwf	((??_init_display_controller+0)+0+1)
 	movlw	158
 movwf	((??_init_display_controller+0)+0)
-	u3677:
+	u3647:
 decfsz	((??_init_display_controller+0)+0),f
-	goto	u3677
+	goto	u3647
 	decfsz	((??_init_display_controller+0)+0+1),f
-	goto	u3677
+	goto	u3647
 	nop
 asmopt pop
 
@@ -6992,26 +6994,26 @@ asmopt pop
 	fcall	_clcd_write
 	line	25
 	
-l2910:	
+l2916:	
 	asmopt push
 asmopt off
 	movlw	166
 movwf	((??_init_display_controller+0)+0)
-	u3687:
+	u3657:
 decfsz	(??_init_display_controller+0)+0,f
-	goto	u3687
+	goto	u3657
 	nop
 asmopt pop
 
 	line	26
 	
-l2912:	
+l2918:	
 	clrf	(clcd_write@mode)
 	movlw	low(033h)
 	fcall	_clcd_write
 	line	27
 	
-l2914:	
+l2920:	
 		asmopt push
 	asmopt off
 	nop2	;2 cycle nop
@@ -7021,20 +7023,20 @@ l2914:
 
 	line	29
 	
-l2916:	
+l2922:	
 	clrf	(clcd_write@mode)
 	movlw	low(038h)
 	fcall	_clcd_write
 	line	30
 	
-l2918:	
+l2924:	
 	asmopt push
 asmopt off
 	movlw	166
 movwf	((??_init_display_controller+0)+0)
-	u3697:
+	u3667:
 decfsz	(??_init_display_controller+0)+0,f
-	goto	u3697
+	goto	u3667
 	nop
 asmopt pop
 
@@ -7044,20 +7046,20 @@ asmopt pop
 	fcall	_clcd_write
 	line	33
 	
-l2920:	
+l2926:	
 	asmopt push
 asmopt off
 	movlw	166
 movwf	((??_init_display_controller+0)+0)
-	u3707:
+	u3677:
 decfsz	(??_init_display_controller+0)+0,f
-	goto	u3707
+	goto	u3677
 	nop
 asmopt pop
 
 	line	35
 	
-l2922:	
+l2928:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Ch)
 	fcall	_clcd_write
@@ -7066,9 +7068,9 @@ l2922:
 asmopt off
 	movlw	166
 movwf	((??_init_display_controller+0)+0)
-	u3717:
+	u3687:
 decfsz	(??_init_display_controller+0)+0,f
-	goto	u3717
+	goto	u3687
 	nop
 asmopt pop
 
@@ -7126,28 +7128,28 @@ _init_adc:
 ; Regs used in _init_adc: [wreg]
 	line	8
 	
-l2982:	
+l2988:	
 	movlw	low(08Eh)
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	movwf	(159)^080h	;volatile
 	line	12
 	
-l2984:	
+l2990:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bsf	(255/8),(255)&7	;volatile
 	line	13
 	
-l2986:	
+l2992:	
 	bcf	(254/8),(254)&7	;volatile
 	line	16
 	
-l2988:	
+l2994:	
 	bsf	(248/8),(248)&7	;volatile
 	line	17
 	
-l229:	
+l225:	
 	return
 	callstack 0
 GLOBAL	__end_of_init_adc
@@ -7209,7 +7211,7 @@ _display_dash_board:
 	movwf	(display_dash_board@event)
 	line	55
 	
-l3232:	
+l3240:	
 	movlw	low(((STR_15)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_15)|8000h))
@@ -7219,11 +7221,11 @@ l3232:
 	fcall	_clcd_print
 	line	56
 	
-l3234:	
+l3242:	
 	fcall	_display_time
 	line	57
 	
-l3236:	
+l3244:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 		movf	(display_dash_board@event),w
@@ -7276,7 +7278,7 @@ l3236:
 	fcall	_clcd_putch
 	line	60
 	
-l326:	
+l322:	
 	return
 	callstack 0
 GLOBAL	__end_of_display_dash_board
@@ -7328,7 +7330,7 @@ _display_time:
 ; Regs used in _display_time: [wreg+status,2+status,0+pclath+cstack]
 	line	42
 	
-l3032:	
+l3040:	
 	fcall	_get_time
 	line	43
 	movlw	low(0C2h)
@@ -7384,7 +7386,7 @@ l3032:
 	fcall	_clcd_putch
 	line	51
 	
-l323:	
+l319:	
 	return
 	callstack 0
 GLOBAL	__end_of_display_time
@@ -7436,7 +7438,7 @@ _get_time:
 ; Regs used in _get_time: [wreg+status,2+status,0+pclath+cstack]
 	line	28
 	
-l2928:	
+l2934:	
 	movlw	low(02h)
 	fcall	_read_ds1307
 	bcf	status, 5	;RP0=0, select bank0
@@ -7456,80 +7458,80 @@ l2928:
 	movwf	0+(_clock_reg)+02h
 	line	31
 	
-l2930:	
+l2936:	
 	movf	(_clock_reg),w
 	movwf	(??_get_time+0)+0
 	movlw	04h
-u2525:
+u2495:
 	clrc
 	rrf	(??_get_time+0)+0,f
 	addlw	-1
 	skipz
-	goto	u2525
+	goto	u2495
 	movf	0+(??_get_time+0)+0,w
 	andlw	03h
 	addlw	030h
 	movwf	(_time)
 	line	32
 	
-l2932:	
+l2938:	
 	movf	(_clock_reg),w
 	andlw	0Fh
 	addlw	030h
 	movwf	0+(_time)+01h
 	line	33
 	
-l2934:	
+l2940:	
 	movf	0+(_clock_reg)+01h,w
 	movwf	(??_get_time+0)+0
 	movlw	04h
-u2535:
+u2505:
 	clrc
 	rrf	(??_get_time+0)+0,f
 	addlw	-1
 	skipz
-	goto	u2535
+	goto	u2505
 	movf	0+(??_get_time+0)+0,w
 	andlw	07h
 	addlw	030h
 	movwf	0+(_time)+02h
 	line	34
 	
-l2936:	
+l2942:	
 	movf	0+(_clock_reg)+01h,w
 	andlw	0Fh
 	addlw	030h
 	movwf	0+(_time)+03h
 	line	35
 	
-l2938:	
+l2944:	
 	movf	0+(_clock_reg)+02h,w
 	movwf	(??_get_time+0)+0
 	movlw	04h
-u2545:
+u2515:
 	clrc
 	rrf	(??_get_time+0)+0,f
 	addlw	-1
 	skipz
-	goto	u2545
+	goto	u2515
 	movf	0+(??_get_time+0)+0,w
 	andlw	07h
 	addlw	030h
 	movwf	0+(_time)+04h
 	line	36
 	
-l2940:	
+l2946:	
 	movf	0+(_clock_reg)+02h,w
 	andlw	0Fh
 	addlw	030h
 	movwf	0+(_time)+05h
 	line	37
 	
-l2942:	
+l2948:	
 	clrf	0+(_time)+06h
 	line	38
 	
-l320:	
+l316:	
 	return
 	callstack 0
 GLOBAL	__end_of_get_time
@@ -7588,7 +7590,7 @@ _read_ds1307:
 	movwf	(read_ds1307@addr)
 	line	18
 	
-l2878:	
+l2884:	
 	fcall	_i2c_start
 	line	19
 	movlw	low(0D0h)
@@ -7602,18 +7604,18 @@ l2878:
 	movlw	low(0D1h)
 	fcall	_i2c_write
 	line	23
-	movlw	low(0)
+	movlw	low(01h)
 	fcall	_i2c_read
 	movwf	(read_ds1307@data)
 	line	24
 	fcall	_i2c_stop
 	line	26
 	
-l2880:	
+l2886:	
 	movf	(read_ds1307@data),w
 	line	27
 	
-l207:	
+l203:	
 	return
 	callstack 0
 GLOBAL	__end_of_read_ds1307
@@ -7623,13 +7625,13 @@ GLOBAL	__end_of_read_ds1307
 
 ;; *************** function _i2c_write *****************
 ;; Defined at:
-;;		line 69 in file "i2c.c"
+;;		line 75 in file "i2c.c"
 ;; Parameters:    Size  Location     Type
 ;;  data            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
 ;;  data            1    4[COMMON] unsigned char 
 ;; Return value:  Size  Location     Type
-;;                  2  186[None  ] int 
+;;                  2  182[None  ] int 
 ;; Registers used:
 ;;		wreg, status,2, status,0, pclath, cstack
 ;; Tracked objects:
@@ -7645,7 +7647,7 @@ GLOBAL	__end_of_read_ds1307
 ;; Hardware stack levels used: 1
 ;; Hardware stack levels required when called: 2
 ;; This function calls:
-;;		_i2c_wait_for_idle
+;;		_i2c_wait
 ;; This function is called by:
 ;;		_read_ds1307
 ;;		_write_ds1307
@@ -7653,36 +7655,40 @@ GLOBAL	__end_of_read_ds1307
 ;;
 psect	text26,local,class=CODE,delta=2,merge=1,group=0
 	file	"i2c.c"
-	line	69
+	line	75
 global __ptext26
 __ptext26:	;psect for function _i2c_write
 psect	text26
 	file	"i2c.c"
-	line	69
+	line	75
 	
 _i2c_write:	
 ;incstack = 0
 	callstack 2
 ; Regs used in _i2c_write: [wreg+status,2+status,0+pclath+cstack]
 	movwf	(i2c_write@data)
-	line	71
-	
-l2862:	
-	fcall	_i2c_wait_for_idle
-	line	72
-	
-l2864:	
-	movf	(i2c_write@data),w
-	bcf	status, 5	;RP0=0, select bank0
-	bcf	status, 6	;RP1=0, select bank0
-	movwf	(19)	;volatile
-	line	74
+	line	77
 	
 l2866:	
-;	Return value of _i2c_write is never used
-	line	75
+	bcf	status, 5	;RP0=0, select bank0
+	bcf	status, 6	;RP1=0, select bank0
+	bcf	(99/8),(99)&7	;volatile
+	line	78
 	
-l187:	
+l2868:	
+	movf	(i2c_write@data),w
+	movwf	(19)	;volatile
+	line	79
+	
+l2870:	
+	fcall	_i2c_wait
+	line	81
+	
+l2872:	
+;	Return value of _i2c_write is never used
+	line	82
+	
+l183:	
 	return
 	callstack 0
 GLOBAL	__end_of_i2c_write
@@ -7692,7 +7698,7 @@ GLOBAL	__end_of_i2c_write
 
 ;; *************** function _i2c_rep_start *****************
 ;; Defined at:
-;;		line 32 in file "i2c.c"
+;;		line 37 in file "i2c.c"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -7721,26 +7727,26 @@ GLOBAL	__end_of_i2c_write
 ;; This function uses a non-reentrant model
 ;;
 psect	text27,local,class=CODE,delta=2,merge=1,group=0
-	line	32
+	line	37
 global __ptext27
 __ptext27:	;psect for function _i2c_rep_start
 psect	text27
 	file	"i2c.c"
-	line	32
+	line	37
 	
 _i2c_rep_start:	
 ;incstack = 0
 	callstack 1
 ; Regs used in _i2c_rep_start: [wreg+status,2+status,0+pclath+cstack]
-	line	34
+	line	39
 	
-l2846:	
+l2848:	
 	fcall	_i2c_stop
-	line	35
+	line	40
 	fcall	_i2c_start
-	line	37
+	line	41
 	
-l176:	
+l172:	
 	return
 	callstack 0
 GLOBAL	__end_of_i2c_rep_start
@@ -7750,7 +7756,7 @@ GLOBAL	__end_of_i2c_rep_start
 
 ;; *************** function _i2c_stop *****************
 ;; Defined at:
-;;		line 39 in file "i2c.c"
+;;		line 43 in file "i2c.c"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -7772,7 +7778,7 @@ GLOBAL	__end_of_i2c_rep_start
 ;; Hardware stack levels used: 1
 ;; Hardware stack levels required when called: 2
 ;; This function calls:
-;;		_i2c_wait_for_idle
+;;		_i2c_wait
 ;; This function is called by:
 ;;		_i2c_rep_start
 ;;		_read_ds1307
@@ -7780,30 +7786,34 @@ GLOBAL	__end_of_i2c_rep_start
 ;; This function uses a non-reentrant model
 ;;
 psect	text28,local,class=CODE,delta=2,merge=1,group=0
-	line	39
+	line	43
 global __ptext28
 __ptext28:	;psect for function _i2c_stop
 psect	text28
 	file	"i2c.c"
-	line	39
+	line	43
 	
 _i2c_stop:	
 ;incstack = 0
 	callstack 2
 ; Regs used in _i2c_stop: [wreg+status,2+status,0+pclath+cstack]
-	line	41
-	
-l2842:	
-	fcall	_i2c_wait_for_idle
-	line	42
+	line	45
 	
 l2844:	
+	bcf	status, 5	;RP0=0, select bank0
+	bcf	status, 6	;RP1=0, select bank0
+	bcf	(99/8),(99)&7	;volatile
+	line	46
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	bsf	(1162/8)^080h,(1162)&7	;volatile
-	line	43
+	line	47
 	
-l179:	
+l2846:	
+	fcall	_i2c_wait
+	line	48
+	
+l175:	
 	return
 	callstack 0
 GLOBAL	__end_of_i2c_stop
@@ -7813,7 +7823,7 @@ GLOBAL	__end_of_i2c_stop
 
 ;; *************** function _i2c_start *****************
 ;; Defined at:
-;;		line 26 in file "i2c.c"
+;;		line 30 in file "i2c.c"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -7835,7 +7845,7 @@ GLOBAL	__end_of_i2c_stop
 ;; Hardware stack levels used: 1
 ;; Hardware stack levels required when called: 2
 ;; This function calls:
-;;		_i2c_wait_for_idle
+;;		_i2c_wait
 ;; This function is called by:
 ;;		_i2c_rep_start
 ;;		_read_ds1307
@@ -7843,30 +7853,34 @@ GLOBAL	__end_of_i2c_stop
 ;; This function uses a non-reentrant model
 ;;
 psect	text29,local,class=CODE,delta=2,merge=1,group=0
-	line	26
+	line	30
 global __ptext29
 __ptext29:	;psect for function _i2c_start
 psect	text29
 	file	"i2c.c"
-	line	26
+	line	30
 	
 _i2c_start:	
 ;incstack = 0
 	callstack 2
 ; Regs used in _i2c_start: [wreg+status,2+status,0+pclath+cstack]
-	line	28
-	
-l2838:	
-	fcall	_i2c_wait_for_idle
-	line	29
+	line	32
 	
 l2840:	
+	bcf	status, 5	;RP0=0, select bank0
+	bcf	status, 6	;RP1=0, select bank0
+	bcf	(99/8),(99)&7	;volatile
+	line	33
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	bsf	(1160/8)^080h,(1160)&7	;volatile
-	line	30
+	line	34
 	
-l173:	
+l2842:	
+	fcall	_i2c_wait
+	line	35
+	
+l169:	
 	return
 	callstack 0
 GLOBAL	__end_of_i2c_start
@@ -7876,7 +7890,7 @@ GLOBAL	__end_of_i2c_start
 
 ;; *************** function _i2c_read *****************
 ;; Defined at:
-;;		line 45 in file "i2c.c"
+;;		line 50 in file "i2c.c"
 ;; Parameters:    Size  Location     Type
 ;;  ack             1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
@@ -7899,90 +7913,102 @@ GLOBAL	__end_of_i2c_start
 ;; Hardware stack levels used: 1
 ;; Hardware stack levels required when called: 2
 ;; This function calls:
-;;		_i2c_wait_for_idle
+;;		_i2c_wait
 ;; This function is called by:
 ;;		_read_ds1307
 ;; This function uses a non-reentrant model
 ;;
 psect	text30,local,class=CODE,delta=2,merge=1,group=0
-	line	45
+	line	50
 global __ptext30
 __ptext30:	;psect for function _i2c_read
 psect	text30
 	file	"i2c.c"
-	line	45
+	line	50
 	
 _i2c_read:	
 ;incstack = 0
 	callstack 2
 ; Regs used in _i2c_read: [wreg+status,2+status,0+pclath+cstack]
 	movwf	(i2c_read@ack)
-	line	49
-	
-l2848:	
-	fcall	_i2c_wait_for_idle
-	line	50
+	line	54
 	
 l2850:	
+	bcf	status, 5	;RP0=0, select bank0
+	bcf	status, 6	;RP1=0, select bank0
+	bcf	(99/8),(99)&7	;volatile
+	line	55
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	bsf	(1163/8)^080h,(1163)&7	;volatile
-	line	52
-	fcall	_i2c_wait_for_idle
-	line	53
+	line	56
 	
 l2852:	
+	fcall	_i2c_wait
+	line	57
+	
+l2854:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(19),w	;volatile
 	movwf	(i2c_read@data)
-	line	55
-	
-l2854:	
-		decf	((i2c_read@ack)),w
-	btfss	status,2
-	goto	u2461
-	goto	u2460
-u2461:
-	goto	l182
-u2460:
-	line	57
+	line	60
 	
 l2856:	
+		decf	((i2c_read@ack)),w
+	btfss	status,2
+	goto	u2431
+	goto	u2430
+u2431:
+	goto	l178
+u2430:
+	line	62
+	
+l2858:	
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	bsf	(1165/8)^080h,(1165)&7	;volatile
-	line	58
-	goto	l183
-	line	59
+	line	63
+	goto	l179
+	line	64
 	
-l182:	
-	line	61
+l178:	
+	line	66
 	bsf	status, 5	;RP0=1, select bank1
 	bcf	status, 6	;RP1=0, select bank1
 	bcf	(1165/8)^080h,(1165)&7	;volatile
-	line	62
-	
-l183:	
-	line	64
-	bsf	(1164/8)^080h,(1164)&7	;volatile
-	line	66
-	
-l2858:	
-	movf	(i2c_read@data),w
 	line	67
 	
-l184:	
+l179:	
+	line	68
+	bcf	status, 5	;RP0=0, select bank0
+	bcf	status, 6	;RP1=0, select bank0
+	bcf	(99/8),(99)&7	;volatile
+	line	69
+	bsf	status, 5	;RP0=1, select bank1
+	bcf	status, 6	;RP1=0, select bank1
+	bsf	(1164/8)^080h,(1164)&7	;volatile
+	line	70
+	
+l2860:	
+	fcall	_i2c_wait
+	line	72
+	
+l2862:	
+	movf	(i2c_read@data),w
+	line	73
+	
+l180:	
 	return
 	callstack 0
 GLOBAL	__end_of_i2c_read
 	__end_of_i2c_read:
 	signat	_i2c_read,4217
-	global	_i2c_wait_for_idle
+	global	_i2c_wait
 
-;; *************** function _i2c_wait_for_idle *****************
+;; *************** function _i2c_wait *****************
 ;; Defined at:
-;;		line 16 in file "i2c.c"
+;;		line 10 in file "i2c.c"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -8013,69 +8039,63 @@ GLOBAL	__end_of_i2c_read
 ;; This function uses a non-reentrant model
 ;;
 psect	text31,local,class=CODE,delta=2,merge=1,group=0
-	line	16
+	line	10
 global __ptext31
-__ptext31:	;psect for function _i2c_wait_for_idle
+__ptext31:	;psect for function _i2c_wait
 psect	text31
 	file	"i2c.c"
-	line	16
+	line	10
 	
-_i2c_wait_for_idle:	
+_i2c_wait:	
 ;incstack = 0
 	callstack 2
-; Regs used in _i2c_wait_for_idle: [wreg+status,2+status,0]
-	line	22
-	
-l2832:	
-	movlw	0D0h
-	movwf	(i2c_wait_for_idle@guard)
-	movlw	07h
-	movwf	((i2c_wait_for_idle@guard))+1
-	line	23
-	
-l163:	
-	bsf	status, 5	;RP0=1, select bank1
-	bcf	status, 6	;RP1=0, select bank1
-	btfsc	(1186/8)^080h,(1186)&7	;volatile
-	goto	u2431
-	goto	u2430
-u2431:
-	goto	l2836
-u2430:
-	
-l2834:	
-	movf	(145)^080h,w	;volatile
-	andlw	01Fh
-	btfsc	status,2
-	goto	u2441
-	goto	u2440
-u2441:
-	goto	l170
-u2440:
+; Regs used in _i2c_wait: [wreg+status,2+status,0]
+	line	12
 	
 l2836:	
+	movlw	0D0h
+	movwf	(i2c_wait@guard)
+	movlw	07h
+	movwf	((i2c_wait@guard))+1
+	line	13
+	
+l158:	
+	bcf	status, 5	;RP0=0, select bank0
+	bcf	status, 6	;RP1=0, select bank0
+	btfsc	(99/8),(99)&7	;volatile
+	goto	u2411
+	goto	u2410
+u2411:
+	goto	l162
+u2410:
+	
+l2838:	
 	movlw	01h
-	subwf	(i2c_wait_for_idle@guard),f
+	subwf	(i2c_wait@guard),f
 	movlw	0
 	skipc
-	decf	(i2c_wait_for_idle@guard+1),f
-	subwf	(i2c_wait_for_idle@guard+1),f
-	movf	(((i2c_wait_for_idle@guard))),w
-iorwf	(((i2c_wait_for_idle@guard+1))),w
+	decf	(i2c_wait@guard+1),f
+	subwf	(i2c_wait@guard+1),f
+	movf	(((i2c_wait@guard))),w
+iorwf	(((i2c_wait@guard+1))),w
 	btfss	status,2
-	goto	u2451
-	goto	u2450
-u2451:
-	goto	l163
-u2450:
-	line	24
+	goto	u2421
+	goto	u2420
+u2421:
+	goto	l158
+u2420:
 	
-l170:	
+l162:	
+	line	14
+	bcf	(99/8),(99)&7	;volatile
+	line	15
+	
+l163:	
 	return
 	callstack 0
-GLOBAL	__end_of_i2c_wait_for_idle
-	__end_of_i2c_wait_for_idle:
-	signat	_i2c_wait_for_idle,89
+GLOBAL	__end_of_i2c_wait
+	__end_of_i2c_wait:
+	signat	_i2c_wait,89
 	global	___awmod
 
 ;; *************** function ___awmod *****************
@@ -8127,20 +8147,20 @@ ___awmod:
 ; Regs used in ___awmod: [wreg+status,2+status,0]
 	line	12
 	
-l3140:	
+l3148:	
 	clrf	(___awmod@sign)
 	line	13
 	
-l3142:	
+l3150:	
 	btfss	(___awmod@dividend+1),7
-	goto	u2881
-	goto	u2880
-u2881:
-	goto	l3148
-u2880:
+	goto	u2851
+	goto	u2850
+u2851:
+	goto	l3156
+u2850:
 	line	14
 	
-l3144:	
+l3152:	
 	comf	(___awmod@dividend),f
 	comf	(___awmod@dividend+1),f
 	incf	(___awmod@dividend),f
@@ -8148,21 +8168,21 @@ l3144:
 	incf	(___awmod@dividend+1),f
 	line	15
 	
-l3146:	
+l3154:	
 	clrf	(___awmod@sign)
 	incf	(___awmod@sign),f
 	line	17
 	
-l3148:	
+l3156:	
 	btfss	(___awmod@divisor+1),7
-	goto	u2891
-	goto	u2890
-u2891:
-	goto	l3152
-u2890:
+	goto	u2861
+	goto	u2860
+u2861:
+	goto	l3160
+u2860:
 	line	18
 	
-l3150:	
+l3158:	
 	comf	(___awmod@divisor),f
 	comf	(___awmod@divisor+1),f
 	incf	(___awmod@divisor),f
@@ -8170,69 +8190,69 @@ l3150:
 	incf	(___awmod@divisor+1),f
 	line	19
 	
-l3152:	
+l3160:	
 	movf	((___awmod@divisor)),w
 iorwf	((___awmod@divisor+1)),w
 	btfsc	status,2
-	goto	u2901
-	goto	u2900
-u2901:
-	goto	l3170
-u2900:
+	goto	u2871
+	goto	u2870
+u2871:
+	goto	l3178
+u2870:
 	line	20
 	
-l3154:	
+l3162:	
 	clrf	(___awmod@counter)
 	incf	(___awmod@counter),f
 	line	21
-	goto	l3160
+	goto	l3168
 	line	22
 	
-l3156:	
+l3164:	
 	movlw	01h
 	
-u2915:
+u2885:
 	clrc
 	rlf	(___awmod@divisor),f
 	rlf	(___awmod@divisor+1),f
 	addlw	-1
 	skipz
-	goto	u2915
+	goto	u2885
 	line	23
 	
-l3158:	
+l3166:	
 	movlw	low(01h)
 	movwf	(??___awmod+0)+0
 	movf	(??___awmod+0)+0,w
 	addwf	(___awmod@counter),f
 	line	21
 	
-l3160:	
+l3168:	
 	btfss	(___awmod@divisor+1),(15)&7
-	goto	u2921
-	goto	u2920
-u2921:
-	goto	l3156
-u2920:
+	goto	u2891
+	goto	u2890
+u2891:
+	goto	l3164
+u2890:
 	line	26
 	
-l3162:	
+l3170:	
 	movf	(___awmod@divisor+1),w
 	subwf	(___awmod@dividend+1),w
 	skipz
-	goto	u2935
+	goto	u2905
 	movf	(___awmod@divisor),w
 	subwf	(___awmod@dividend),w
-u2935:
+u2905:
 	skipc
-	goto	u2931
-	goto	u2930
-u2931:
-	goto	l3166
-u2930:
+	goto	u2901
+	goto	u2900
+u2901:
+	goto	l3174
+u2900:
 	line	27
 	
-l3164:	
+l3172:	
 	movf	(___awmod@divisor),w
 	subwf	(___awmod@dividend),f
 	movf	(___awmod@divisor+1),w
@@ -8241,40 +8261,40 @@ l3164:
 	subwf	(___awmod@dividend+1),f
 	line	28
 	
-l3166:	
+l3174:	
 	movlw	01h
 	
-u2945:
+u2915:
 	clrc
 	rrf	(___awmod@divisor+1),f
 	rrf	(___awmod@divisor),f
 	addlw	-1
 	skipz
-	goto	u2945
+	goto	u2915
 	line	29
 	
-l3168:	
+l3176:	
 	movlw	01h
 	subwf	(___awmod@counter),f
 	btfss	status,2
-	goto	u2951
-	goto	u2950
-u2951:
-	goto	l3162
-u2950:
+	goto	u2921
+	goto	u2920
+u2921:
+	goto	l3170
+u2920:
 	line	31
 	
-l3170:	
+l3178:	
 	movf	((___awmod@sign)),w
 	btfsc	status,2
-	goto	u2961
-	goto	u2960
-u2961:
-	goto	l3174
-u2960:
+	goto	u2931
+	goto	u2930
+u2931:
+	goto	l3182
+u2930:
 	line	32
 	
-l3172:	
+l3180:	
 	comf	(___awmod@dividend),f
 	comf	(___awmod@dividend+1),f
 	incf	(___awmod@dividend),f
@@ -8282,14 +8302,14 @@ l3172:
 	incf	(___awmod@dividend+1),f
 	line	33
 	
-l3174:	
+l3182:	
 	movf	(___awmod@dividend+1),w
 	movwf	(?___awmod+1)
 	movf	(___awmod@dividend),w
 	movwf	(?___awmod)
 	line	34
 	
-l703:	
+l699:	
 	return
 	callstack 0
 GLOBAL	__end_of___awmod
@@ -8346,22 +8366,22 @@ ___awdiv:
 ; Regs used in ___awdiv: [wreg+status,2+status,0]
 	line	13
 	
-l3096:	
+l3104:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	clrf	(___awdiv@sign)
 	line	14
 	
-l3098:	
+l3106:	
 	btfss	(___awdiv@divisor+1),7
-	goto	u2781
-	goto	u2780
-u2781:
-	goto	l3104
-u2780:
+	goto	u2751
+	goto	u2750
+u2751:
+	goto	l3112
+u2750:
 	line	15
 	
-l3100:	
+l3108:	
 	comf	(___awdiv@divisor),f
 	comf	(___awdiv@divisor+1),f
 	incf	(___awdiv@divisor),f
@@ -8369,21 +8389,21 @@ l3100:
 	incf	(___awdiv@divisor+1),f
 	line	16
 	
-l3102:	
+l3110:	
 	clrf	(___awdiv@sign)
 	incf	(___awdiv@sign),f
 	line	18
 	
-l3104:	
+l3112:	
 	btfss	(___awdiv@dividend+1),7
-	goto	u2791
-	goto	u2790
-u2791:
-	goto	l3110
-u2790:
+	goto	u2761
+	goto	u2760
+u2761:
+	goto	l3118
+u2760:
 	line	19
 	
-l3106:	
+l3114:	
 	comf	(___awdiv@dividend),f
 	comf	(___awdiv@dividend+1),f
 	incf	(___awdiv@dividend),f
@@ -8391,91 +8411,91 @@ l3106:
 	incf	(___awdiv@dividend+1),f
 	line	20
 	
-l3108:	
+l3116:	
 	movlw	low(01h)
 	movwf	(??___awdiv+0)+0
 	movf	(??___awdiv+0)+0,w
 	xorwf	(___awdiv@sign),f
 	line	22
 	
-l3110:	
+l3118:	
 	clrf	(___awdiv@quotient)
 	clrf	(___awdiv@quotient+1)
 	line	23
 	
-l3112:	
+l3120:	
 	movf	((___awdiv@divisor)),w
 iorwf	((___awdiv@divisor+1)),w
 	btfsc	status,2
-	goto	u2801
-	goto	u2800
-u2801:
-	goto	l3132
-u2800:
+	goto	u2771
+	goto	u2770
+u2771:
+	goto	l3140
+u2770:
 	line	24
 	
-l3114:	
+l3122:	
 	clrf	(___awdiv@counter)
 	incf	(___awdiv@counter),f
 	line	25
-	goto	l3120
+	goto	l3128
 	line	26
 	
-l3116:	
+l3124:	
 	movlw	01h
 	
-u2815:
+u2785:
 	clrc
 	rlf	(___awdiv@divisor),f
 	rlf	(___awdiv@divisor+1),f
 	addlw	-1
 	skipz
-	goto	u2815
+	goto	u2785
 	line	27
 	
-l3118:	
+l3126:	
 	movlw	low(01h)
 	movwf	(??___awdiv+0)+0
 	movf	(??___awdiv+0)+0,w
 	addwf	(___awdiv@counter),f
 	line	25
 	
-l3120:	
+l3128:	
 	btfss	(___awdiv@divisor+1),(15)&7
-	goto	u2821
-	goto	u2820
-u2821:
-	goto	l3116
-u2820:
+	goto	u2791
+	goto	u2790
+u2791:
+	goto	l3124
+u2790:
 	line	30
 	
-l3122:	
+l3130:	
 	movlw	01h
 	
-u2835:
+u2805:
 	clrc
 	rlf	(___awdiv@quotient),f
 	rlf	(___awdiv@quotient+1),f
 	addlw	-1
 	skipz
-	goto	u2835
+	goto	u2805
 	line	31
 	movf	(___awdiv@divisor+1),w
 	subwf	(___awdiv@dividend+1),w
 	skipz
-	goto	u2845
+	goto	u2815
 	movf	(___awdiv@divisor),w
 	subwf	(___awdiv@dividend),w
-u2845:
+u2815:
 	skipc
-	goto	u2841
-	goto	u2840
-u2841:
-	goto	l3128
-u2840:
+	goto	u2811
+	goto	u2810
+u2811:
+	goto	l3136
+u2810:
 	line	32
 	
-l3124:	
+l3132:	
 	movf	(___awdiv@divisor),w
 	subwf	(___awdiv@dividend),f
 	movf	(___awdiv@divisor+1),w
@@ -8484,44 +8504,44 @@ l3124:
 	subwf	(___awdiv@dividend+1),f
 	line	33
 	
-l3126:	
+l3134:	
 	bsf	(___awdiv@quotient)+(0/8),(0)&7
 	line	35
 	
-l3128:	
+l3136:	
 	movlw	01h
 	
-u2855:
+u2825:
 	clrc
 	rrf	(___awdiv@divisor+1),f
 	rrf	(___awdiv@divisor),f
 	addlw	-1
 	skipz
-	goto	u2855
+	goto	u2825
 	line	36
 	
-l3130:	
+l3138:	
 	movlw	01h
 	subwf	(___awdiv@counter),f
 	btfss	status,2
-	goto	u2861
-	goto	u2860
-u2861:
-	goto	l3122
-u2860:
+	goto	u2831
+	goto	u2830
+u2831:
+	goto	l3130
+u2830:
 	line	38
 	
-l3132:	
+l3140:	
 	movf	((___awdiv@sign)),w
 	btfsc	status,2
-	goto	u2871
-	goto	u2870
-u2871:
-	goto	l3136
-u2870:
+	goto	u2841
+	goto	u2840
+u2841:
+	goto	l3144
+u2840:
 	line	39
 	
-l3134:	
+l3142:	
 	comf	(___awdiv@quotient),f
 	comf	(___awdiv@quotient+1),f
 	incf	(___awdiv@quotient),f
@@ -8529,14 +8549,14 @@ l3134:
 	incf	(___awdiv@quotient+1),f
 	line	40
 	
-l3136:	
+l3144:	
 	movf	(___awdiv@quotient+1),w
 	movwf	(?___awdiv+1)
 	movf	(___awdiv@quotient),w
 	movwf	(?___awdiv)
 	line	41
 	
-l690:	
+l686:	
 	return
 	callstack 0
 GLOBAL	__end_of___awdiv
@@ -8589,18 +8609,18 @@ _clear_log:
 	movwf	(clear_log@reset_flag)
 	line	266
 	
-l3424:	
+l3432:	
 		movlw	23
 	xorwf	((clear_log@reset_flag)),w
 	btfss	status,2
-	goto	u3281
-	goto	u3280
-u3281:
-	goto	l3434
-u3280:
+	goto	u3251
+	goto	u3250
+u3251:
+	goto	l3442
+u3250:
 	line	268
 	
-l3426:	
+l3434:	
 	movlw	0FFh
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -8612,7 +8632,7 @@ l3426:
 	movwf	(_pos)
 	line	270
 	
-l3428:	
+l3436:	
 	movlw	low(((STR_22)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_22)|8000h))
@@ -8622,7 +8642,7 @@ l3428:
 	fcall	_clcd_print
 	line	271
 	
-l3430:	
+l3438:	
 	movlw	low(((STR_23)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_23)|8000h))
@@ -8641,25 +8661,25 @@ movlw	25
 movwf	((??_clear_log+0)+0+1)
 	movlw	79
 movwf	((??_clear_log+0)+0)
-	u3727:
+	u3697:
 decfsz	((??_clear_log+0)+0),f
-	goto	u3727
+	goto	u3697
 	decfsz	((??_clear_log+0)+0+1),f
-	goto	u3727
+	goto	u3697
 	decfsz	((??_clear_log+0)+0+2),f
-	goto	u3727
+	goto	u3697
 asmopt pop
 
 	line	273
 	movlw	low(011h)
-	goto	l393
+	goto	l389
 	line	275
 	
-l3434:	
+l3442:	
 	movlw	low(022h)
 	line	276
 	
-l393:	
+l389:	
 	return
 	callstack 0
 GLOBAL	__end_of_clear_log
@@ -8720,67 +8740,67 @@ _change_password:
 	movwf	(change_password@key)
 	line	282
 	
-l3438:	
+l3446:	
 		movlw	25
 	xorwf	((change_password@reset_flag)),w
 	btfss	status,2
-	goto	u3291
-	goto	u3290
-u3291:
-	goto	l3444
-u3290:
+	goto	u3261
+	goto	u3260
+u3261:
+	goto	l3452
+u3260:
 	line	284
 	
-l3440:	
+l3448:	
 	clrf	(change_password@pos)
 	clrf	(change_password@pos+1)
 	line	285
 	
-l3442:	
+l3450:	
 	movlw	01h
 	movwf	(change_password@once)
 	movlw	0
 	movwf	((change_password@once))+1
 	line	287
 	
-l3444:	
+l3452:	
 	movf	(change_password@pos+1),w
 	xorlw	80h
 	movwf	btemp+1
 	movlw	(0)^80h
 	subwf	btemp+1,w
 	skipz
-	goto	u3305
+	goto	u3275
 	movlw	04h
 	subwf	(change_password@pos),w
-u3305:
+u3275:
 
 	skipnc
-	goto	u3301
-	goto	u3300
-u3301:
-	goto	l3456
-u3300:
+	goto	u3271
+	goto	u3270
+u3271:
+	goto	l3464
+u3270:
 	
-l3446:	
+l3454:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	((change_password@once)),w
 iorwf	((change_password@once+1)),w
 	btfsc	status,2
-	goto	u3311
-	goto	u3310
-u3311:
-	goto	l3456
-u3310:
+	goto	u3281
+	goto	u3280
+u3281:
+	goto	l3464
+u3280:
 	line	289
 	
-l3448:	
+l3456:	
 	clrf	(change_password@once)
 	clrf	(change_password@once+1)
 	line	290
 	
-l3450:	
+l3458:	
 	movlw	low(((STR_24)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_24)|8000h))
@@ -8790,21 +8810,21 @@ l3450:
 	fcall	_clcd_print
 	line	291
 	
-l3452:	
+l3460:	
 	clrf	(clcd_write@mode)
 	movlw	low(0C0h)
 	fcall	_clcd_write
 	line	292
 	
-l3454:	
+l3462:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Fh)
 	fcall	_clcd_write
 	line	293
-	goto	l3470
+	goto	l3478
 	line	294
 	
-l3456:	
+l3464:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(change_password@pos+1),w
@@ -8813,43 +8833,43 @@ l3456:
 	movlw	(0)^80h
 	subwf	btemp+1,w
 	skipz
-	goto	u3325
+	goto	u3295
 	movlw	04h
 	subwf	(change_password@pos),w
-u3325:
+u3295:
 
 	skipc
-	goto	u3321
-	goto	u3320
-u3321:
-	goto	l3470
-u3320:
+	goto	u3291
+	goto	u3290
+u3291:
+	goto	l3478
+u3290:
 	
-l3458:	
+l3466:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	((change_password@once)),w
 iorwf	((change_password@once+1)),w
 	btfss	status,2
-	goto	u3331
-	goto	u3330
-u3331:
-	goto	l3470
-u3330:
+	goto	u3301
+	goto	u3300
+u3301:
+	goto	l3478
+u3300:
 	line	296
 	
-l3460:	
+l3468:	
 	movlw	01h
 	movwf	(change_password@once)
 	movlw	0
 	movwf	((change_password@once))+1
 	line	297
 	
-l3462:	
+l3470:	
 	fcall	_clear_screen
 	line	298
 	
-l3464:	
+l3472:	
 	movlw	low(((STR_25)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_25)|8000h))
@@ -8859,32 +8879,32 @@ l3464:
 	fcall	_clcd_print
 	line	299
 	
-l3466:	
+l3474:	
 	clrf	(clcd_write@mode)
 	movlw	low(0C0h)
 	fcall	_clcd_write
 	line	300
 	
-l3468:	
+l3476:	
 	clrf	(clcd_write@mode)
 	movlw	low(0Fh)
 	fcall	_clcd_write
 	line	302
 	
-l3470:	
+l3478:	
 		movlw	55
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	xorwf	((change_password@key)),w
 	btfss	status,2
-	goto	u3341
-	goto	u3340
-u3341:
-	goto	l3478
-u3340:
+	goto	u3311
+	goto	u3310
+u3311:
+	goto	l3486
+u3310:
 	line	304
 	
-l3472:	
+l3480:	
 	movf	(change_password@pos),w
 	addlw	low(change_password@pwd|((0x0)<<8))&0ffh
 	movwf	fsr0
@@ -8893,7 +8913,7 @@ l3472:
 	movwf	indf
 	line	305
 	
-l3474:	
+l3482:	
 	movf	(change_password@pos),w
 	andlw	03h
 	addlw	0C0h
@@ -8902,7 +8922,7 @@ l3474:
 	fcall	_clcd_putch
 	line	306
 	
-l3476:	
+l3484:	
 	movlw	01h
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -8912,21 +8932,21 @@ l3476:
 	movlw	0
 	addwf	(change_password@pos+1),f
 	line	307
-	goto	l3486
+	goto	l3494
 	line	308
 	
-l3478:	
+l3486:	
 		movlw	47
 	xorwf	((change_password@key)),w
 	btfss	status,2
-	goto	u3351
-	goto	u3350
-u3351:
-	goto	l3486
-u3350:
+	goto	u3321
+	goto	u3320
+u3321:
+	goto	l3494
+u3320:
 	line	310
 	
-l3480:	
+l3488:	
 	movf	(change_password@pos),w
 	addlw	low(change_password@pwd|((0x0)<<8))&0ffh
 	movwf	fsr0
@@ -8935,29 +8955,29 @@ l3480:
 	movwf	indf
 	line	311
 	
-l3482:	
+l3490:	
 	movf	(change_password@pos),w
 	andlw	03h
 	addlw	0C0h
 	movwf	(clcd_putch@addr)
 	movlw	low(02Ah)
 	fcall	_clcd_putch
-	goto	l3476
+	goto	l3484
 	line	314
 	
-l3486:	
+l3494:	
 		movlw	8
 	xorwf	((change_password@pos)),w
 iorwf	((change_password@pos+1)),w
 	btfss	status,2
-	goto	u3361
-	goto	u3360
-u3361:
-	goto	l3528
-u3360:
+	goto	u3331
+	goto	u3330
+u3331:
+	goto	l3536
+u3330:
 	line	316
 	
-l3488:	
+l3496:	
 	movlw	(low(change_password@pwd|((0x0)<<8)+04h))&0ffh
 	movwf	(strncmp@r)
 	movlw	04h
@@ -8969,21 +8989,21 @@ l3488:
 	movf	((0+(?_strncmp))),w
 iorwf	((1+(?_strncmp))),w
 	btfss	status,2
-	goto	u3371
-	goto	u3370
-u3371:
-	goto	l3516
-u3370:
+	goto	u3341
+	goto	u3340
+u3341:
+	goto	l3524
+u3340:
 	line	319
 	
-l3490:	
+l3498:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	clrf	(change_password@i)
 	clrf	(change_password@i+1)
 	line	321
 	
-l3496:	
+l3504:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	movf	(change_password@i),w
@@ -8996,7 +9016,7 @@ l3496:
 	fcall	_eeprom_write
 	line	322
 	
-l3498:	
+l3506:	
 	movlw	01h
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -9006,31 +9026,31 @@ l3498:
 	movlw	0
 	addwf	(change_password@i+1),f
 	
-l3500:	
+l3508:	
 	movf	(change_password@i+1),w
 	xorlw	80h
 	movwf	btemp+1
 	movlw	(0)^80h
 	subwf	btemp+1,w
 	skipz
-	goto	u3385
+	goto	u3355
 	movlw	04h
 	subwf	(change_password@i),w
-u3385:
+u3355:
 
 	skipc
-	goto	u3381
-	goto	u3380
-u3381:
-	goto	l3496
-u3380:
+	goto	u3351
+	goto	u3350
+u3351:
+	goto	l3504
+u3350:
 	line	323
 	
-l3502:	
+l3510:	
 	fcall	_clear_screen
 	line	324
 	
-l3504:	
+l3512:	
 	movlw	low(((STR_26)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_26)|8000h))
@@ -9040,7 +9060,7 @@ l3504:
 	fcall	_clcd_print
 	line	325
 	
-l3506:	
+l3514:	
 	movlw	low(((STR_27)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_27)|8000h))
@@ -9050,7 +9070,7 @@ l3506:
 	fcall	_clcd_print
 	line	326
 	
-l3508:	
+l3516:	
 	asmopt push
 asmopt off
 movlw  77
@@ -9061,27 +9081,27 @@ movlw	25
 movwf	((??_change_password+0)+0+1)
 	movlw	79
 movwf	((??_change_password+0)+0)
-	u3737:
+	u3707:
 decfsz	((??_change_password+0)+0),f
-	goto	u3737
+	goto	u3707
 	decfsz	((??_change_password+0)+0+1),f
-	goto	u3737
+	goto	u3707
 	decfsz	((??_change_password+0)+0+2),f
-	goto	u3737
+	goto	u3707
 asmopt pop
 
 	line	327
 	
-l3510:	
+l3518:	
 	movlw	low(011h)
-	goto	l413
+	goto	l409
 	line	331
 	
-l3516:	
+l3524:	
 	fcall	_clear_screen
 	line	332
 	
-l3518:	
+l3526:	
 	movlw	low(((STR_28)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_28)|8000h))
@@ -9091,7 +9111,7 @@ l3518:
 	fcall	_clcd_print
 	line	333
 	
-l3520:	
+l3528:	
 	movlw	low(((STR_29)|8000h))
 	movwf	(clcd_print@str)
 	movlw	high(((STR_29)|8000h))
@@ -9099,14 +9119,14 @@ l3520:
 	movlw	low(0C0h)
 	movwf	(clcd_print@addr)
 	fcall	_clcd_print
-	goto	l3508
+	goto	l3516
 	line	339
 	
-l3528:	
+l3536:	
 	movlw	low(010h)
 	line	340
 	
-l413:	
+l409:	
 	return
 	callstack 0
 GLOBAL	__end_of_change_password
@@ -9165,7 +9185,7 @@ _strncmp:
 	movwf	(strncmp@l)
 	line	5
 	
-l3074:	
+l3082:	
 	movlw	01h
 	subwf	(strncmp@n),f
 	movlw	0
@@ -9174,22 +9194,22 @@ l3074:
 	subwf	(strncmp@n+1),f
 		incf	(((strncmp@n))),w
 	skipz
-	goto	u2731
+	goto	u2701
 	incf	(((strncmp@n+1))),w
 	btfss	status,2
-	goto	u2731
-	goto	u2730
-u2731:
-	goto	l3084
-u2730:
+	goto	u2701
+	goto	u2700
+u2701:
+	goto	l3092
+u2700:
 	
-l3076:	
+l3084:	
 	clrf	(?_strncmp)
 	clrf	(?_strncmp+1)
-	goto	l1003
+	goto	l999
 	line	6
 	
-l3080:	
+l3088:	
 	movlw	low(01h)
 	movwf	(??_strncmp+0)+0
 	movf	(??_strncmp+0)+0,w
@@ -9199,7 +9219,7 @@ l3080:
 	movf	(??_strncmp+0)+0,w
 	addwf	(strncmp@r),f
 	
-l3082:	
+l3090:	
 	movlw	01h
 	subwf	(strncmp@n),f
 	movlw	0
@@ -9207,40 +9227,40 @@ l3082:
 	decf	(strncmp@n+1),f
 	subwf	(strncmp@n+1),f
 	
-l3084:	
+l3092:	
 	movf	(strncmp@l),w
 	movwf	fsr0
 	bcf	status, 7	;select IRP bank0
 	movf	(indf),w
 	btfsc	status,2
-	goto	u2741
-	goto	u2740
-u2741:
-	goto	l3092
-u2740:
+	goto	u2711
+	goto	u2710
+u2711:
+	goto	l3100
+u2710:
 	
-l3086:	
+l3094:	
 	movf	(strncmp@r),w
 	movwf	fsr0
 	movf	(indf),w
 	btfsc	status,2
-	goto	u2751
-	goto	u2750
-u2751:
-	goto	l3092
-u2750:
+	goto	u2721
+	goto	u2720
+u2721:
+	goto	l3100
+u2720:
 	
-l3088:	
+l3096:	
 	movf	((strncmp@n)),w
 iorwf	((strncmp@n+1)),w
 	btfsc	status,2
-	goto	u2761
-	goto	u2760
-u2761:
-	goto	l3092
-u2760:
+	goto	u2731
+	goto	u2730
+u2731:
+	goto	l3100
+u2730:
 	
-l3090:	
+l3098:	
 	movf	(strncmp@r),w
 	movwf	fsr
 	movf	indf,w
@@ -9250,14 +9270,14 @@ l3090:
 	movf	indf,w
 	xorwf	(??_strncmp+0)+0,w
 	skipnz
-	goto	u2771
-	goto	u2770
-u2771:
-	goto	l3080
-u2770:
+	goto	u2741
+	goto	u2740
+u2741:
+	goto	l3088
+u2740:
 	line	7
 	
-l3092:	
+l3100:	
 	movf	(strncmp@r),w
 	movwf	fsr
 	movf	indf,w
@@ -9275,7 +9295,7 @@ l3092:
 	
 	line	8
 	
-l1003:	
+l999:	
 	return
 	callstack 0
 GLOBAL	__end_of_strncmp
@@ -9331,19 +9351,19 @@ _eeprom_write:
 	movwf	(eeprom_write@addr)
 	line	8
 	
-l526:	
+l522:	
 	
-l527:	
+l523:	
 	bsf	status, 5	;RP0=1, select bank3
 	bsf	status, 6	;RP1=1, select bank3
 	btfsc	(396)^0180h,1	;volsfr
-	goto	u2491
-	goto	u2490
-u2491:
-	goto	l527
-u2490:
+	goto	u2461
+	goto	u2460
+u2461:
+	goto	l523
+u2460:
 	
-l2884:	
+l2890:	
 	movf	(eeprom_write@addr),w
 	bcf	status, 5	;RP0=0, select bank2
 	bsf	status, 6	;RP1=1, select bank2
@@ -9351,7 +9371,7 @@ l2884:
 	movf	(eeprom_write@value),w
 	movwf	(268)^0100h	;volatile
 	
-l2886:	
+l2892:	
 	movlw	low(03Fh)
 	movwf	(??_eeprom_write+0)+0
 	movf	(??_eeprom_write+0)+0,w
@@ -9359,55 +9379,55 @@ l2886:
 	bsf	status, 6	;RP1=1, select bank3
 	andwf	(396)^0180h,f	;volsfr
 	
-l2888:	
+l2894:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bcf	(3),0	;volatile
 	
-l2890:	
+l2896:	
 	btfss	(11),7	;volatile
-	goto	u2501
-	goto	u2500
-u2501:
-	goto	l530
-u2500:
+	goto	u2471
+	goto	u2470
+u2471:
+	goto	l526
+u2470:
 	
-l2892:	
+l2898:	
 	bsf	(3),0	;volatile
 	
-l530:	
+l526:	
 	bcf	(11),7	;volatile
 	bsf	status, 5	;RP0=1, select bank3
 	bsf	status, 6	;RP1=1, select bank3
 	bsf	(396)^0180h,2	;volsfr
 	
-l2894:	
+l2900:	
 	movlw	low(055h)
 	movwf	(397)^0180h	;volsfr
 	movlw	low(0AAh)
 	movwf	(397)^0180h	;volsfr
 	
-l2896:	
+l2902:	
 	bsf	(396)^0180h,1	;volsfr
 	
-l2898:	
+l2904:	
 	bcf	(396)^0180h,2	;volsfr
 	
-l2900:	
+l2906:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	btfss	(3),0	;volatile
-	goto	u2511
-	goto	u2510
-u2511:
-	goto	l533
-u2510:
+	goto	u2481
+	goto	u2480
+u2481:
+	goto	l529
+u2480:
 	
-l2902:	
+l2908:	
 	bsf	(11),7	;volatile
 	line	9
 	
-l533:	
+l529:	
 	return
 	callstack 0
 GLOBAL	__end_of_eeprom_write
@@ -9462,26 +9482,26 @@ _clear_screen:
 ; Regs used in _clear_screen: [wreg+status,2+status,0+pclath+cstack]
 	line	93
 	
-l3020:	
+l3028:	
 	clrf	(clcd_write@mode)
 	movlw	low(01h)
 	fcall	_clcd_write
 	line	94
 	
-l3022:	
+l3030:	
 	asmopt push
 asmopt off
 	movlw	166
 movwf	((??_clear_screen+0)+0)
-	u3747:
+	u3717:
 decfsz	(??_clear_screen+0)+0,f
-	goto	u3747
+	goto	u3717
 	nop
 asmopt pop
 
 	line	95
 	
-l340:	
+l336:	
 	return
 	callstack 0
 GLOBAL	__end_of_clear_screen
@@ -9542,7 +9562,7 @@ _clcd_putch:
 	movwf	(clcd_putch@data)
 	line	53
 	
-l2924:	
+l2930:	
 	clrf	(clcd_write@mode)
 	movf	(clcd_putch@addr),w
 	fcall	_clcd_write
@@ -9619,15 +9639,15 @@ _clcd_print:
 ; Regs used in _clcd_print: [wreg-fsr0h+status,2+status,0+btemp+1+pclath+cstack]
 	line	59
 	
-l3024:	
+l3032:	
 	clrf	(clcd_write@mode)
 	movf	(clcd_print@addr),w
 	fcall	_clcd_write
 	line	61
-	goto	l3030
+	goto	l3038
 	line	63
 	
-l3026:	
+l3034:	
 	clrf	(clcd_write@mode)
 	incf	(clcd_write@mode),f
 	movf	(clcd_print@str+1),w
@@ -9638,7 +9658,7 @@ l3026:
 	fcall	_clcd_write
 	line	64
 	
-l3028:	
+l3036:	
 	movlw	01h
 	addwf	(clcd_print@str),f
 	skipnc
@@ -9647,7 +9667,7 @@ l3028:
 	addwf	(clcd_print@str+1),f
 	line	61
 	
-l3030:	
+l3038:	
 	movf	(clcd_print@str+1),w
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
@@ -9657,11 +9677,11 @@ l3030:
 	fcall	stringtab
 	xorlw	0
 	skipz
-	goto	u2651
-	goto	u2650
-u2651:
-	goto	l3026
-u2650:
+	goto	u2621
+	goto	u2620
+u2621:
+	goto	l3034
+u2620:
 	line	66
 	
 l131:	
@@ -9723,44 +9743,44 @@ _clcd_write:
 	movwf	(clcd_write@byte)
 	line	6
 	
-l2870:	
+l2876:	
 	btfsc	(clcd_write@mode),0
-	goto	u2471
-	goto	u2470
+	goto	u2441
+	goto	u2440
 	
-u2471:
+u2441:
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bsf	(74/8),(74)&7	;volatile
-	goto	u2484
-u2470:
+	goto	u2454
+u2440:
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bcf	(74/8),(74)&7	;volatile
-u2484:
+u2454:
 	line	7
 	
-l2872:	
+l2878:	
 	movf	(clcd_write@byte),w
 	movwf	(8)	;volatile
 	line	9
 	
-l2874:	
+l2880:	
 	bsf	(73/8),(73)&7	;volatile
 	line	10
 	asmopt push
 asmopt off
 	movlw	166
 movwf	((??_clcd_write+0)+0)
-	u3757:
+	u3727:
 decfsz	(??_clcd_write+0)+0,f
-	goto	u3757
+	goto	u3727
 	nop
 asmopt pop
 
 	line	11
 	
-l2876:	
+l2882:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	bcf	(73/8),(73)&7	;volatile
@@ -9771,11 +9791,11 @@ movlw	27
 movwf	((??_clcd_write+0)+0+1)
 	movlw	158
 movwf	((??_clcd_write+0)+0)
-	u3767:
+	u3737:
 decfsz	((??_clcd_write+0)+0),f
-	goto	u3767
+	goto	u3737
 	decfsz	((??_clcd_write+0)+0+1),f
-	goto	u3767
+	goto	u3737
 	nop
 asmopt pop
 
@@ -9835,86 +9855,86 @@ ___lwdiv:
 ; Regs used in ___lwdiv: [wreg+status,2+status,0]
 	line	13
 	
-l3532:	
+l3540:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	clrf	(___lwdiv@quotient)
 	clrf	(___lwdiv@quotient+1)
 	line	14
 	
-l3534:	
+l3542:	
 	movf	((___lwdiv@divisor)),w
 iorwf	((___lwdiv@divisor+1)),w
 	btfsc	status,2
-	goto	u3391
-	goto	u3390
-u3391:
-	goto	l3554
-u3390:
+	goto	u3361
+	goto	u3360
+u3361:
+	goto	l3562
+u3360:
 	line	15
 	
-l3536:	
+l3544:	
 	clrf	(___lwdiv@counter)
 	incf	(___lwdiv@counter),f
 	line	16
-	goto	l3542
+	goto	l3550
 	line	17
 	
-l3538:	
+l3546:	
 	movlw	01h
 	
-u3405:
+u3375:
 	clrc
 	rlf	(___lwdiv@divisor),f
 	rlf	(___lwdiv@divisor+1),f
 	addlw	-1
 	skipz
-	goto	u3405
+	goto	u3375
 	line	18
 	
-l3540:	
+l3548:	
 	movlw	low(01h)
 	movwf	(??___lwdiv+0)+0
 	movf	(??___lwdiv+0)+0,w
 	addwf	(___lwdiv@counter),f
 	line	16
 	
-l3542:	
+l3550:	
 	btfss	(___lwdiv@divisor+1),(15)&7
-	goto	u3411
-	goto	u3410
-u3411:
-	goto	l3538
-u3410:
+	goto	u3381
+	goto	u3380
+u3381:
+	goto	l3546
+u3380:
 	line	21
 	
-l3544:	
+l3552:	
 	movlw	01h
 	
-u3425:
+u3395:
 	clrc
 	rlf	(___lwdiv@quotient),f
 	rlf	(___lwdiv@quotient+1),f
 	addlw	-1
 	skipz
-	goto	u3425
+	goto	u3395
 	line	22
 	movf	(___lwdiv@divisor+1),w
 	subwf	(___lwdiv@dividend+1),w
 	skipz
-	goto	u3435
+	goto	u3405
 	movf	(___lwdiv@divisor),w
 	subwf	(___lwdiv@dividend),w
-u3435:
+u3405:
 	skipc
-	goto	u3431
-	goto	u3430
-u3431:
-	goto	l3550
-u3430:
+	goto	u3401
+	goto	u3400
+u3401:
+	goto	l3558
+u3400:
 	line	23
 	
-l3546:	
+l3554:	
 	movf	(___lwdiv@divisor),w
 	subwf	(___lwdiv@dividend),f
 	movf	(___lwdiv@divisor+1),w
@@ -9923,41 +9943,41 @@ l3546:
 	subwf	(___lwdiv@dividend+1),f
 	line	24
 	
-l3548:	
+l3556:	
 	bsf	(___lwdiv@quotient)+(0/8),(0)&7
 	line	26
 	
-l3550:	
+l3558:	
 	movlw	01h
 	
-u3445:
+u3415:
 	clrc
 	rrf	(___lwdiv@divisor+1),f
 	rrf	(___lwdiv@divisor),f
 	addlw	-1
 	skipz
-	goto	u3445
+	goto	u3415
 	line	27
 	
-l3552:	
+l3560:	
 	movlw	01h
 	subwf	(___lwdiv@counter),f
 	btfss	status,2
-	goto	u3451
-	goto	u3450
-u3451:
-	goto	l3544
-u3450:
+	goto	u3421
+	goto	u3420
+u3421:
+	goto	l3552
+u3420:
 	line	29
 	
-l3554:	
+l3562:	
 	movf	(___lwdiv@quotient+1),w
 	movwf	(?___lwdiv+1)
 	movf	(___lwdiv@quotient),w
 	movwf	(?___lwdiv)
 	line	30
 	
-l817:	
+l813:	
 	return
 	callstack 0
 GLOBAL	__end_of___lwdiv
@@ -10022,18 +10042,18 @@ interrupt_function:
 psect	text43
 	line	8
 	
-i1l2814:	
+i1l2818:	
 	bcf	status, 5	;RP0=0, select bank0
 	bcf	status, 6	;RP1=0, select bank0
 	btfss	(97/8),(97)&7	;volatile
-	goto	u238_21
-	goto	u238_20
-u238_21:
-	goto	i1l270
-u238_20:
+	goto	u236_21
+	goto	u236_20
+u236_21:
+	goto	i1l266
+u236_20:
 	line	10
 	
-i1l2816:	
+i1l2820:	
 	movlw	01h
 	addwf	(isr@count),f
 	skipnc
@@ -10046,64 +10066,64 @@ i1l2816:
 	skipnz
 	xorwf	(((isr@count+1))),w
 	btfss	status,2
-	goto	u239_21
-	goto	u239_20
-u239_21:
-	goto	i1l2830
-u239_20:
+	goto	u237_21
+	goto	u237_20
+u237_21:
+	goto	i1l2834
+u237_20:
 	line	12
 	
-i1l2818:	
+i1l2822:	
 	clrf	(isr@count)
 	clrf	(isr@count+1)
 	line	13
 	
-i1l2820:	
+i1l2824:	
 	movf	((_sec)),w
+	btfsc	status,2
+	goto	u238_21
+	goto	u238_20
+u238_21:
+	goto	i1l2828
+u238_20:
+	line	15
+	
+i1l2826:	
+	movlw	01h
+	subwf	(_sec),f
+	line	16
+	goto	i1l2834
+	line	17
+	
+i1l2828:	
+	movf	((_sec)),w
+	btfss	status,2
+	goto	u239_21
+	goto	u239_20
+u239_21:
+	goto	i1l2834
+u239_20:
+	
+i1l2830:	
+	movf	((_return_time)),w
 	btfsc	status,2
 	goto	u240_21
 	goto	u240_20
 u240_21:
-	goto	i1l2824
+	goto	i1l2834
 u240_20:
-	line	15
-	
-i1l2822:	
-	movlw	01h
-	subwf	(_sec),f
-	line	16
-	goto	i1l2830
-	line	17
-	
-i1l2824:	
-	movf	((_sec)),w
-	btfss	status,2
-	goto	u241_21
-	goto	u241_20
-u241_21:
-	goto	i1l2830
-u241_20:
-	
-i1l2826:	
-	movf	((_return_time)),w
-	btfsc	status,2
-	goto	u242_21
-	goto	u242_20
-u242_21:
-	goto	i1l2830
-u242_20:
 	line	18
 	
-i1l2828:	
+i1l2832:	
 	movlw	01h
 	subwf	(_return_time),f
 	line	22
 	
-i1l2830:	
+i1l2834:	
 	bcf	(97/8),(97)&7	;volatile
 	line	24
 	
-i1l270:	
+i1l266:	
 	movf	(??_isr+1),w
 	movwf	pclath
 	swapf	(??_isr+0),w

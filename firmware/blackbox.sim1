@@ -70,6 +70,10 @@
 
 <item itemtype="Ground" CircId="Ground-90" mainComp="false" Show_id="false" Show_Val="false" Pos="516,816" rotation="0" hflip="1" vflip="1" label="Ground" idLabPos="0,-20" labelrot="0" valLabPos="0,0" valLabRot="0" />
 
+<item itemtype="Rail" CircId="Rail-96" mainComp="false" Show_id="false" Show_Val="false" Pos="-104,8" rotation="0" hflip="1" vflip="1" label="Rail" idLabPos="0,-20" labelrot="0" valLabPos="0,0" valLabRot="0" Voltage="5 V" />
+
+<item itemtype="Resistor" CircId="Resistor-97" mainComp="false" Show_id="false" Show_Val="false" Pos="-60,8" rotation="0" hflip="1" vflip="1" label="Resistor" idLabPos="0,-20" labelrot="0" valLabPos="0,0" valLabRot="0" Resistance="10 kΩ" />
+
 <item itemtype="Node" CircId="Node-22" mainComp="false" Pos="-80,144" />
 
 <item itemtype="Node" CircId="Node-29" mainComp="false" Pos="120,144" />
@@ -100,7 +104,7 @@
 
 <item itemtype="Connector" uid="connector-10" startpinid="p16F877-1-PORTD5" endpinid="Hd44780-2-dataPin5" pointList="56,104,248,104,248,-116,20,-116,20,-152" />
 
-<item itemtype="Connector" uid="connector-11" startpinid="p16F877-1-PORTD6" endpinid="Hd44780-2-dataPin6" pointList="56,96,264,96,264,-124,28,-124,28,-152" />
+<item itemtype="Connector" uid="connector-11" startpinid="p16F877-1-PORTD6" endpinid="Hd44780-2-dataPin6" pointList="56,96,56,456,264,456,264,-124,28,-124,28,-152" />
 
 <item itemtype="Connector" uid="connector-12" startpinid="p16F877-1-PORTD7" endpinid="Hd44780-2-dataPin7" pointList="56,88,280,88,280,-132,36,-132,36,-152" />
 
@@ -189,5 +193,9 @@
 <item itemtype="Connector" uid="connector-95" startpinid="Push-86-switch0pinN" endpinid="Ground-90-Gnd" pointList="476,800,516,800" />
 
 <item itemtype="Connector" uid="connector-8" startpinid="p16F877-1-PORTD3" endpinid="Hd44780-2-dataPin3" pointList="56,152,216,152,216,-100,4,-100,4,-152" />
+
+<item itemtype="Connector" uid="connector-98" startpinid="Rail-96-outnod" endpinid="Resistor-97-lPin" pointList="-88,8,-76,8" />
+
+<item itemtype="Connector" uid="connector-99" startpinid="Resistor-97-rPin" endpinid="p16F877-1-MCLR" pointList="-44,8,-8,8" />
 
 </circuit>

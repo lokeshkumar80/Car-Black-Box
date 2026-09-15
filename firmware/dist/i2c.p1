@@ -1,14 +1,12 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"2840 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
+"2828 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
+[v _SSPIF `Vb ~T0 @X0 0 e@99 ]
+"2840
 [v _SSPM3 `Vb ~T0 @X0 0 e@163 ]
 "1823
 [v _SSPADD `Vuc ~T0 @X0 0 e@147 ]
 "2822
 [v _SSPEN `Vb ~T0 @X0 0 e@165 ]
-"2807
-[v _R_nW `Vb ~T0 @X0 0 e@1186 ]
-"1754
-[v _SSPCON2 `Vuc ~T0 @X0 0 e@145 ]
 "2810
 [v _SEN `Vb ~T0 @X0 0 e@1160 ]
 "9 ./i2c.h
@@ -145,142 +143,156 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; <" EECON1 equ 018Ch ;# ">
 "2363
 [; <" EECON2 equ 018Dh ;# ">
-"4 i2c.c
-[v _init_i2c `(v ~T0 @X0 1 ef1`ul ]
-"5
+"10 i2c.c
+[v _i2c_wait `(v ~T0 @X0 1 sf ]
+"11
 {
-[e :U _init_i2c ]
-"4
-[v _baud `ul ~T0 @X0 1 r1 ]
-"5
+[e :U _i2c_wait ]
 [f ]
-"7
-[e = _SSPM3 -> -> 1 `i `b ]
-"10
-[e = _SSPADD -> - -> -> / -> -> 20000000 `l `ul * -> -> -> 4 `i `l `ul _baud `uc `i -> 1 `i `uc ]
-"13
-[e = _SSPEN -> -> 1 `i `b ]
-"14
-[e :UE 99 ]
-}
-"16
-[v _i2c_wait_for_idle `(v ~T0 @X0 1 sf ]
-"17
-{
-[e :U _i2c_wait_for_idle ]
-[f ]
-"22
+"12
 [v _guard `ui ~T0 @X0 1 a ]
 [e = _guard -> -> 2000 `i `ui ]
-"23
-[e $U 101  ]
-[e :U 102 ]
+"13
+[e $U 100  ]
 [e :U 101 ]
-[e $ && || _R_nW != & -> _SSPCON2 `i -> 31 `i -> 0 `i != =- _guard -> -> 1 `i `ui -> -> 0 `i `ui 102  ]
-[e :U 103 ]
-"24
-[e :UE 100 ]
+[e :U 100 ]
+[e $ && ! _SSPIF != =- _guard -> -> 1 `i `ui -> -> 0 `i `ui 101  ]
+[e :U 102 ]
+"14
+[e = _SSPIF -> -> 0 `i `b ]
+"15
+[e :UE 99 ]
 }
+"17
+[v _init_i2c `(v ~T0 @X0 1 ef1`ul ]
+"18
+{
+[e :U _init_i2c ]
+"17
+[v _baud `ul ~T0 @X0 1 r1 ]
+"18
+[f ]
+"20
+[e = _SSPM3 -> -> 1 `i `b ]
+"23
+[e = _SSPADD -> - -> -> / -> -> 20000000 `l `ul * -> -> -> 4 `i `l `ul _baud `uc `i -> 1 `i `uc ]
 "26
-[v _i2c_start `(v ~T0 @X0 1 ef ]
+[e = _SSPEN -> -> 1 `i `b ]
 "27
+[e = _SSPIF -> -> 0 `i `b ]
+"28
+[e :UE 103 ]
+}
+"30
+[v _i2c_start `(v ~T0 @X0 1 ef ]
+"31
 {
 [e :U _i2c_start ]
 [f ]
-"28
-[e ( _i2c_wait_for_idle ..  ]
-"29
+"32
+[e = _SSPIF -> -> 0 `i `b ]
+"33
 [e = _SEN -> -> 1 `i `b ]
-"30
+"34
+[e ( _i2c_wait ..  ]
+"35
 [e :UE 104 ]
 }
-"32
+"37
 [v _i2c_rep_start `(v ~T0 @X0 1 ef ]
-"33
+"38
 {
 [e :U _i2c_rep_start ]
 [f ]
-"34
+"39
 [e ( _i2c_stop ..  ]
-"35
+"40
 [e ( _i2c_start ..  ]
-"37
+"41
 [e :UE 105 ]
 }
-"39
+"43
 [v _i2c_stop `(v ~T0 @X0 1 ef ]
-"40
+"44
 {
 [e :U _i2c_stop ]
 [f ]
-"41
-[e ( _i2c_wait_for_idle ..  ]
-"42
+"45
+[e = _SSPIF -> -> 0 `i `b ]
+"46
 [e = _PEN -> -> 1 `i `b ]
-"43
+"47
+[e ( _i2c_wait ..  ]
+"48
 [e :UE 106 ]
 }
-"45
+"50
 [v _i2c_read `(uc ~T0 @X0 1 ef1`uc ]
-"46
+"51
 {
 [e :U _i2c_read ]
-"45
-[v _ack `uc ~T0 @X0 1 r1 ]
-"46
-[f ]
-"47
-[v _data `uc ~T0 @X0 1 a ]
-"49
-[e ( _i2c_wait_for_idle ..  ]
 "50
-[e = _RCEN -> -> 1 `i `b ]
+[v _ack `uc ~T0 @X0 1 r1 ]
+"51
+[f ]
 "52
-[e ( _i2c_wait_for_idle ..  ]
-"53
-[e = _data _SSPBUF ]
+[v _data `uc ~T0 @X0 1 a ]
+"54
+[e = _SSPIF -> -> 0 `i `b ]
 "55
-[e $ ! == -> _ack `i -> 1 `i 108  ]
+[e = _RCEN -> -> 1 `i `b ]
 "56
-{
+[e ( _i2c_wait ..  ]
 "57
+[e = _data _SSPBUF ]
+"60
+[e $ ! == -> _ack `i -> 1 `i 108  ]
+"61
+{
+"62
 [e = _ACKDT -> -> 1 `i `b ]
-"58
+"63
 }
 [e $U 109  ]
-"59
+"64
 [e :U 108 ]
-"60
+"65
 {
-"61
+"66
 [e = _ACKDT -> -> 0 `i `b ]
-"62
+"67
 }
 [e :U 109 ]
-"64
+"68
+[e = _SSPIF -> -> 0 `i `b ]
+"69
 [e = _ACKEN -> -> 1 `i `b ]
-"66
+"70
+[e ( _i2c_wait ..  ]
+"72
 [e ) _data ]
 [e $UE 107  ]
-"67
+"73
 [e :UE 107 ]
 }
-"69
+"75
 [v _i2c_write `(i ~T0 @X0 1 ef1`uc ]
-"70
+"76
 {
 [e :U _i2c_write ]
-"69
+"75
 [v _data `uc ~T0 @X0 1 r1 ]
-"70
+"76
 [f ]
-"71
-[e ( _i2c_wait_for_idle ..  ]
-"72
+"77
+[e = _SSPIF -> -> 0 `i `b ]
+"78
 [e = _SSPBUF _data ]
-"74
+"79
+[e ( _i2c_wait ..  ]
+"81
 [e ) -> ! _ACKSTAT `i ]
 [e $UE 110  ]
-"75
+"82
 [e :UE 110 ]
 }

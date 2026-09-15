@@ -20,7 +20,7 @@ unsigned char read_ds1307(unsigned char addr)
     i2c_write(addr);
     i2c_rep_start();
     i2c_write(SLAVE_READ);
-    data = i2c_read(0);
+    data = i2c_read(1);   /* NACK: this is the last (only) byte read */
     i2c_stop();
     
     return data;

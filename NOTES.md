@@ -42,6 +42,9 @@ car-blackbox-linux/
 └── firmware/
     ├── Makefile        # command-line xc8-cc build (no MPLAB X)
     ├── blackbox.sim1   # ready-made SimulIDE 1.1.0-SR2 circuit
+    tools/
+    ├── readlog.py      # decode the EEPROM event log out of a saved .sim1
+    └── patch-simulide.sh  # REQUIRED once per SimulIDE install (change #9)
     ├── compile_flags.txt    # editor/clangd include paths only (not used by make)
     ├── main.c / main.h # app entry + config word (see change #2) + shared defines
     ├── car_black_box_def.c/.h   # app logic: login, menu, view/clear log, etc.
@@ -81,6 +84,57 @@ car-blackbox-linux/
      unlikely to care; a real chip would return unreliable speed readings.
 
    Cost: 3 instructions (3891 -> 3894 words). No new warnings.
+
+6. **Moved `init_adc()` to the front of `init_config()` (`main.c`).** `ADCON1`'s
+   PCFG bits only become correct once `init_adc()` runs, and until then RE1/RE2
+   are analog (AN6/AN7) -- those are the CLCD's EN and RS lines. Initialising
+   the LCD before the ADC meant driving it through pins still in analog mode.
+7. **Bounded the I2C idle wait (`i2c.c`).** `i2c_wait_for_idle()` was
+   `while (R_nW || (SSPCON2 & 0x1F));` -- an unbounded spin, and the only one
+   on the path from reset to the main loop. An absent or unresponsive DS1307
+   wedged the whole system: the LCD stayed powered but blank forever, because
+   `init_ds1307()` never returned. It now carries a 2000-iteration guard (a
+   100 kHz byte takes ~90 us, so the guard is far longer than any real
+   transfer). Worst case the time field reads garbage; everything else runs.
+   (Superseded by #10, which replaced the wait entirely; the bound remains.)
+8. **Added the MCLR pull-up to `blackbox.sim1`.** The generated circuit left
+   MCLR floating; SETUP.md's hand-wiring net-list had the 10 kΩ to +5 V all
+   along, the generator just didn't. With MCLR floating SimulIDE holds the PIC
+   in reset -- MCU Monitor showed PC = 0 and STATUS = 0x18 (power-on) after
+   minutes of "running". Now: Rail-96 -> Resistor-97 (10 kΩ) -> MCLR.
+9. **Patched SimulIDE's PIC16F87x model** (`tools/patch-simulide.sh`, applied
+   to the copy in `~/opt`). The shipped `p16F87x_perif.xml` declares the EEPROM
+   registers but has no `<rom>` engine behind them, so `EECON1.WR` is a plain
+   RAM bit nothing ever clears. XC8's `eeprom_write()` starts with `while(WR);`
+   -- MCU Monitor showed PC cycling 0x0AB7-0x0ABA, which the map file put
+   inside `_eeprom_write`, the very first EEPROM write in `main()`, *before*
+   the first dashboard draw. Hence a lit but blank LCD even with the firmware
+   running. The 16F88x model ships the block; the script copies it across
+   (`dataregs="EEDATA"`, this family's register name). **This patch is
+   required** on a fresh SimulIDE install; the script is idempotent.
+10. **Rewrote the I2C driver's completion handling and fixed the read ACK
+    (`i2c.c`, `ds1307.c`).** Two defects:
+    - `read_ds1307()` called `i2c_read(0)`, sending an **ACK** after the only
+      byte it reads, then STOP. I2C requires the master to NACK the final
+      byte so the slave releases SDA; after an ACK the DS1307 drives the next
+      byte, the STOP can't form, and every later transaction is desynced.
+      Symptom: first reading plausible, then garbage, then frozen -- the LCD
+      showed 11:00:51 forever while the log's boot record said 26:00:51 and
+      the PC clock said 22:16. Now `i2c_read(1)`.
+    - Every wait was the `R_nW || (SSPCON2 & 0x1F)` idle test. Replaced with
+      waiting on `SSPIF`, which hardware sets when each master operation
+      (start, stop, byte, ACK) completes -- the portable signal, and what
+      interrupt-driven drivers key on. Still bounded (2000 iterations).
+    `i2c_rep_start()` is still upstream's STOP+START rather than a true `RSEN`
+    repeated start; the DS1307 doesn't need the real thing and it was one
+    less variable while debugging. A true repeated start is the correct form
+    if anyone revisits it.
+
+    Cost of 5-10 together: 3894 -> 3921 words (47.9%).
+
+**Build/run gotcha:** SimulIDE reads the `.hex` when the *circuit is opened*.
+Rebuilding while SimulIDE is already open leaves it running the old firmware --
+reopen the circuit, or right-click the PIC and reload, after every `make`.
 
 **Deliberately not changed:** the password reset described under *Facts worth
 remembering*. Making it persist would change what the firmware does, not fix
@@ -145,15 +199,31 @@ wire per SETUP.md, load `dist/blackbox.hex`, set PIC frequency to 20 MHz, run.
   `saveEepr="true"` keeps the EEPROM contents across resets (the log; the
   password is overwritten at boot regardless — see above).
 
+## Verified working (2026-09-15)
+
+Driven end-to-end on a headless Xvfb display with synthetic input, so every
+step below was actually observed, not inferred:
+
+- Dashboard: `TIME E SP` / `22:56:03 ON 66`, seconds ticking, time matching
+  the PC clock (DS1307 seeded from it), speed 66 from the pot at mid-travel.
+- SW2 twice -> event field `GN` then `GR`. SW1 -> `C `.
+- SW4 -> ` ENTER PASSWORD `; SW5,SW4,SW5,SW4 -> `* View log / Clear log`;
+  SW6 -> `0 22:55:56 ON 00`; SW5 -> `1 23:01:57 GN 66`; SW5 -> `2 23:02:42
+  GR 66`.
+- `tools/readlog.py` on the saved circuit decodes the same three records.
+
+How the diagnosis went, for next time: the MCU Monitor (right-click the PIC)
+is the tool. PC = 0 with STATUS 0x18 means held in reset (-> MCLR). A PC
+cycling in a 4-word range means a spin loop; build with `-Wl,-Map=` and look
+the address up (`_eeprom_write` -> the EEPROM model; `i2c_wait_for_idle` ->
+the bus). The EEPROM tab all-FF after a minute means `main()` never got past
+its first write.
+
 ## Good next steps
 
-- Press **Play** in SimulIDE and confirm the LCD shows the dashboard, the pot
-  drives the speed field, and the keypad walks the menu. This is the one thing
-  never exercised here — the build and the circuit load are verified, but the
-  firmware has not actually been *run*.
-- If the LCD stays blank, suspect the `__delay_us`/`__delay_ms` timing in
-  `clcd.c` against SimulIDE's clock before suspecting the wiring — the net-list
-  is machine-generated from the pin definitions in the driver headers.
-- Optional: install XC8 into `/opt/microchip/xc8/v2.46` was done with the free
-  license, so program-space figures above will shrink under a paid licence.
-  Nothing here is near the 8 K limit, so there is no reason to bother.
+- The password reset on boot (see *Facts worth remembering*) is the one
+  remaining behaviour worth a decision: keep upstream's, or guard the write on
+  a magic byte at EEPROM 0x04 so *Change Password* survives a reset.
+- `dist/` is committed. It is build output and changes on every `make`; a
+  `.gitignore` entry for `firmware/dist/` would keep diffs readable.
+- `i2c_rep_start()` -> real `RSEN` repeated start (see change #10).

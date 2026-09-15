@@ -1,28 +1,28 @@
 ### HEXMate logfile and output summary ###
 
 ### Command-line arguments ###
- /tmp/xcXppihfP/driver_tmp_3.o
+ /tmp/xcXajkcKh/driver_tmp_3.o
  -Odist/blackbox.hex
  -logfile=dist/blackbox.hxl
  -addressing=2
 
 ### Memory Usage ###
  Input file ranges:
-  0h - 5h		(/tmp/xcXppihfP/driver_tmp_3.o)
-  8h - FFDh		(/tmp/xcXppihfP/driver_tmp_3.o)
-  1000h - 1023h		(/tmp/xcXppihfP/driver_tmp_3.o)
-  1194h - 1FFFh		(/tmp/xcXppihfP/driver_tmp_3.o)
-  400Eh - 400Fh		(/tmp/xcXppihfP/driver_tmp_3.o)
+  0h - 5h		(/tmp/xcXajkcKh/driver_tmp_3.o)
+  8h - FFDh		(/tmp/xcXajkcKh/driver_tmp_3.o)
+  1000h - 1023h		(/tmp/xcXajkcKh/driver_tmp_3.o)
+  117Eh - 1FFFh		(/tmp/xcXajkcKh/driver_tmp_3.o)
+  400Eh - 400Fh		(/tmp/xcXajkcKh/driver_tmp_3.o)
  Unused ranges:
   6h - 7h
   FFEh - FFFh
-  1024h - 1193h
+  1024h - 117Dh
   2000h - 400Dh
 
 ### Hex Memory Map ###
  Legend:
   -- = Unused memory
-  H1 = Input file             (/tmp/xcXppihfP/driver_tmp_3.o)
+  H1 = Input file             (/tmp/xcXajkcKh/driver_tmp_3.o)
 ----------------------------------------------------------
          | 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 ----------------------------------------------------------
@@ -286,7 +286,9 @@
 00001010 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
 00001020 | H1 H1 H1 H1 -- -- -- -- -- -- -- -- -- -- -- --
 ----------------------------------------------------------
-00001190 | -- -- -- -- H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
+00001170 | -- -- -- -- -- -- -- -- -- -- -- -- -- -- H1 H1
+00001180 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
+00001190 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
 000011A0 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
 000011B0 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
 000011C0 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1

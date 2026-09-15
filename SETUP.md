@@ -55,9 +55,22 @@ ln -sf ~/opt/SimulIDE_1.1.0-SR2_Lin64/simulide ~/.local/bin/simulide
 simulide &            # requires ~/.local/bin on your PATH
 ```
 
-No root needed. Its PIC16F877 model (`data/PIC/p16F877.mcu`) covers everything
-this firmware touches: 256 B data EEPROM, ADC on PORTA0/AN0, Timer2, the MSSP
-in I²C mode, and PORTD/PORTE.
+No root needed.
+
+**Then patch its PIC16F87x model — this step is required:**
+
+```bash
+tools/patch-simulide.sh            # default path ~/opt/SimulIDE_1.1.0-SR2_Lin64
+```
+
+SimulIDE 1.1.0-SR2's PIC16F87x model declares the data-EEPROM registers but
+ships without the engine behind them, so an EEPROM write sets `EECON1.WR` and
+nothing ever clears it. XC8's `eeprom_write()` waits on that bit, and this
+firmware's first EEPROM write happens *before* the first dashboard draw — so
+without the patch the LCD lights up and stays blank forever. The script copies
+the `<rom>` block from the (working) PIC16F88x model, keeps a `.orig` backup, and
+is safe to re-run. With it in place the model covers everything this firmware
+touches: 256 B data EEPROM, ADC on AN0, Timer2, the MSSP in I²C mode, PORTD/E.
 
 ## 3. Build the firmware
 
@@ -110,8 +123,21 @@ already contains the PIC, the 16x2 LCD, the six buttons with their pull-ups, the
 speed potentiometer and the DS1307, fully wired. The MCU loads
 `dist/blackbox.hex` automatically, so after any `make` just reopen or reset.
 
-Press **Play** (top toolbar) to run. If the LCD stays blank, confirm the PIC's
-*Frequency* property is `20 MHz` and that `dist/blackbox.hex` exists.
+Press the round **Power** button (top toolbar; if your window is narrower than
+about 1100 px it's under the `»` overflow as *Start Simulation*). Within a
+second the LCD shows the dashboard:
+
+```
+  TIME     E  SP
+HH:MM:SS   ON 66
+```
+
+Confirmation it's running: *Simulation Time* counts up and the seconds tick.
+
+The buttons are the column on the right; **click the small grey cap under each
+label** — zoom in (`Ctrl`+wheel) until it's a comfortable target, the wire and
+label aren't clickable. SimulIDE's wheel zooms rather than scrolls; arrow keys
+scroll the canvas once it has focus.
 
 ### Wiring it by hand instead
 
@@ -202,8 +228,10 @@ The LCD should light up with the dashboard.
   the net-list in section 4 if so.
 - **Config word added.** The upstream repo set only `WDTE=OFF` and let MPLAB X
   fill in the rest. For a command-line build and a clean sim, `main.c` here sets
-  the full word (notably `FOSC=HS` for the 20 MHz crystal and `LVP=OFF`). This
-  is the only change to their source.
+  the full word (notably `FOSC=HS` for the 20 MHz crystal and `LVP=OFF`).
+- **Rebuilding while SimulIDE is open** leaves it running the old hex — it reads
+  the file when the circuit is opened. Reopen the circuit, or right-click the
+  PIC → *Reload firmware*, after every `make`.
 - **XC8 Free mode** limits optimization; it has no effect on whether this builds
   or runs.
 
@@ -212,20 +240,33 @@ The LCD should light up with the dashboard.
 - `xc8-cc: command not found` → PATH isn't set; use `XC8DIR=/opt/microchip/xc8/<ver>/bin make`.
 - Editor (not `make`) reports missing `xc.h` → `firmware/compile_flags.txt`
   hardcodes `/opt/microchip/xc8/v2.46/...`; edit it to your installed version.
-- LCD shows nothing → check RE1/RE2 (E/RS) aren't swapped, LCD RW is grounded,
-  and the PIC frequency is set to 20 MHz.
-- Buttons do nothing → verify they pull the pin to **GND** on press and each has
-  a pull-up to +5V; confirm they're on RB0–RB5.
+- LCD lights up but stays blank → almost certainly the SimulIDE model patch
+  (step 2) hasn't been applied. Confirm with right-click PIC → *Open Mcu
+  Monitor*: a PC cycling in a 4-word range around `_eeprom_write` is the
+  signature. If PC reads **0** with STATUS `0x18`, the chip is held in reset —
+  MCLR isn't pulled up (the shipped `.sim1` has the 10 kΩ; a hand-wired circuit
+  must too). Only after those: RE1/RE2 (E/RS) swapped, LCD RW not grounded,
+  PIC frequency not 20 MHz.
+- Time shows but is wrong or frozen → an I²C protocol fault. The shipped driver
+  NACKs the last byte of a read and waits on `SSPIF`; if you've swapped in
+  another I²C driver, check both.
+- Buttons do nothing → you're clicking the label or wire, not the grey cap;
+  zoom in. Electrically: they pull the pin to **GND** on press and each has a
+  pull-up to +5V, on RB0–RB5.
 - Speed stuck at 0 → the potentiometer wiper must go to **RA0/AN0**, ends to +5V and GND.
 
 ---
 
 ### What changed vs. the original repo
 
-Two source changes: `main.c`'s config word was completed, and `init_adc()` in
-`adc.c` now sets `ADCON1 = 0x8E` (so AN0 is the only analog pin, leaving RE1/RE2
-free for the LCD) and selects a Fosc/32 ADC clock (Tad = 1.6 us, the minimum at
-20 MHz — upstream left it at Fosc/2). See NOTES.md for the reasoning. Alongside
+Source changes, all defects rather than porting artefacts (NOTES.md has the
+evidence for each): `main.c`'s config word was completed and `init_adc()` moved
+ahead of `init_clcd()`; `adc.c` sets `ADCON1 = 0x8E` (AN0 the only analog pin,
+freeing RE1/RE2 for the LCD) and a Fosc/32 ADC clock (upstream's Fosc/2 was out
+of spec at 20 MHz); `i2c.c` waits on `SSPIF` with a bound instead of spinning
+unbounded on the idle test; `ds1307.c` NACKs the last byte of a read as I²C
+requires. The circuit gained the MCLR pull-up the net-list always specified.
+Outside the repo, SimulIDE's PIC16F87x model needs `tools/patch-simulide.sh`. Alongside
 it, three bits of dead weight were removed: the `newfile.c/.h` duplicate files
 (referenced nowhere), the `nbproject/` MPLAB X project, and the old flat layout
 — the sources now live under `firmware/`. The build system was swapped from

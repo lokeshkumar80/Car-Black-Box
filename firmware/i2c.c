@@ -1,6 +1,19 @@
 #include <xc.h>
 #include "i2c.h"
 
+/* Wait for the MSSP to finish its current master operation. Hardware sets
+ * SSPIF when a start, stop, byte transfer or ACK cycle completes; polling it
+ * is more portable than the R/W + SSPCON2 idle test, which not every model
+ * of the module reproduces. Bounded so an absent or unresponsive slave can't
+ * wedge the whole system: a 100kHz byte takes ~90us and this guard is far
+ * longer than that, so it only expires when the bus is genuinely stuck. */
+static void i2c_wait(void)
+{
+    unsigned int guard = 2000;
+    while (!SSPIF && --guard);
+    SSPIF = 0;
+}
+
 void init_i2c(unsigned long baud)
 {
     /* Set I2C Master Mode */
@@ -11,47 +24,39 @@ void init_i2c(unsigned long baud)
     
     /* Enable SSP */
     SSPEN = 1;
-}
-
-static void i2c_wait_for_idle(void)
-{
-    /* Wait till no activity on the bus, but bounded: an absent or
-     * unresponsive slave must not wedge the whole system. A 100kHz byte
-     * takes ~90us, so this guard is orders of magnitude longer than any
-     * real transfer, and only expires when the bus is genuinely stuck. */
-    unsigned int guard = 2000;
-    while ((R_nW || (SSPCON2 & 0x1F)) && --guard);
+    SSPIF = 0;
 }
 
 void i2c_start(void)
 {
-    i2c_wait_for_idle();
+    SSPIF = 0;
     SEN = 1;
+    i2c_wait();
 }
 
 void i2c_rep_start(void)
 {
     i2c_stop();
     i2c_start();
-    
 }
 
 void i2c_stop(void)
 {
-    i2c_wait_for_idle();
+    SSPIF = 0;
     PEN = 1;
+    i2c_wait();
 }
 
 unsigned char i2c_read(unsigned char ack)
 {
     unsigned char data;
     
-    i2c_wait_for_idle();
+    SSPIF = 0;
     RCEN = 1;
-    
-    i2c_wait_for_idle();
+    i2c_wait();
     data = SSPBUF;
     
+    /* ack == 1 -> NACK (last byte), ack == 0 -> ACK (more to come) */
     if (ack == 1)
     {
         ACKDT = 1;
@@ -60,16 +65,18 @@ unsigned char i2c_read(unsigned char ack)
     {
         ACKDT = 0;
     }
-  
+    SSPIF = 0;
     ACKEN = 1;
+    i2c_wait();
     
     return data;
 }
 
 int i2c_write(unsigned char data)
 {
-    i2c_wait_for_idle();
+    SSPIF = 0;
     SSPBUF = data;
+    i2c_wait();
     
     return !ACKSTAT; // !1
 }

@@ -77,19 +77,19 @@
 [v _read_ds1307 read_ds1307 `(uc  1 e 1 0 ]
 "29
 [v _write_ds1307 write_ds1307 `(v  1 e 1 0 ]
-"4 /data/Projects/Car-Black-Box-linux/firmware/i2c.c
+"10 /data/Projects/Car-Black-Box-linux/firmware/i2c.c
+[v _i2c_wait i2c_wait `(v  1 s 1 i2c_wait ]
+"17
 [v _init_i2c init_i2c `(v  1 e 1 0 ]
-"16
-[v _i2c_wait_for_idle i2c_wait_for_idle `(v  1 s 1 i2c_wait_for_idle ]
-"26
+"30
 [v _i2c_start i2c_start `(v  1 e 1 0 ]
-"32
+"37
 [v _i2c_rep_start i2c_rep_start `(v  1 e 1 0 ]
-"39
+"43
 [v _i2c_stop i2c_stop `(v  1 e 1 0 ]
-"45
+"50
 [v _i2c_read i2c_read `(uc  1 e 1 0 ]
-"69
+"75
 [v _i2c_write i2c_write `(i  1 e 2 0 ]
 "4 /data/Projects/Car-Black-Box-linux/firmware/isr.c
 [v _isr isr `II(v  1 e 1 0 ]
@@ -99,7 +99,7 @@
 [v _main main `(v  1 e 1 0 ]
 "5 /data/Projects/Car-Black-Box-linux/firmware/timers.c
 [v _init_timer2 init_timer2 `(v  1 e 1 0 ]
-[s S387 . 1 `uc 1 C 1 0 :1:0 
+[s S386 . 1 `uc 1 C 1 0 :1:0 
 `uc 1 DC 1 0 :1:1 
 `uc 1 Z 1 0 :1:2 
 `uc 1 nPD 1 0 :1:3 
@@ -108,21 +108,21 @@
 `uc 1 IRP 1 0 :1:7 
 ]
 "99 /opt/microchip/xc8/v2.46/pic/include/proc/pic16f877a.h
-[s S395 . 1 `uc 1 . 1 0 :5:0 
+[s S394 . 1 `uc 1 . 1 0 :5:0 
 `uc 1 RP0 1 0 :1:5 
 `uc 1 RP1 1 0 :1:6 
 ]
-[s S399 . 1 `uc 1 CARRY 1 0 :1:0 
+[s S398 . 1 `uc 1 CARRY 1 0 :1:0 
 `uc 1 . 1 0 :1:1 
 `uc 1 ZERO 1 0 :1:2 
 ]
-[u S403 . 1 `S387 1 . 1 0 `S395 1 . 1 0 `S399 1 . 1 0 ]
-[v _STATUSbits STATUSbits `VES403  1 e 1 @3 ]
+[u S402 . 1 `S386 1 . 1 0 `S394 1 . 1 0 `S398 1 . 1 0 ]
+[v _STATUSbits STATUSbits `VES402  1 e 1 @3 ]
 "216
 [v _PORTB PORTB `VEuc  1 e 1 @6 ]
 "340
 [v _PORTD PORTD `VEuc  1 e 1 @8 ]
-[s S424 . 1 `uc 1 RBIF 1 0 :1:0 
+[s S423 . 1 `uc 1 RBIF 1 0 :1:0 
 `uc 1 INTF 1 0 :1:1 
 `uc 1 TMR0IF 1 0 :1:2 
 `uc 1 RBIE 1 0 :1:3 
@@ -132,13 +132,13 @@
 `uc 1 GIE 1 0 :1:7 
 ]
 "477
-[s S433 . 1 `uc 1 . 1 0 :2:0 
+[s S432 . 1 `uc 1 . 1 0 :2:0 
 `uc 1 T0IF 1 0 :1:2 
 `uc 1 . 1 0 :2:3 
 `uc 1 T0IE 1 0 :1:5 
 ]
-[u S438 . 1 `S424 1 . 1 0 `S433 1 . 1 0 ]
-[v _INTCONbits INTCONbits `VES438  1 e 1 @11 ]
+[u S437 . 1 `S423 1 . 1 0 `S432 1 . 1 0 ]
+[v _INTCONbits INTCONbits `VES437  1 e 1 @11 ]
 "808
 [v _SSPBUF SSPBUF `VEuc  1 e 1 @19 ]
 "1152
@@ -147,8 +147,6 @@
 [v _TRISB TRISB `VEuc  1 e 1 @134 ]
 "1499
 [v _TRISD TRISD `VEuc  1 e 1 @136 ]
-"1754
-[v _SSPCON2 SSPCON2 `VEuc  1 e 1 @145 ]
 "1816
 [v _PR2 PR2 `VEuc  1 e 1 @146 ]
 "1823
@@ -163,7 +161,7 @@
 [v _EEADR EEADR `VEuc  1 e 1 @269 ]
 "2316
 [v _EECON1 EECON1 `VEuc  1 e 1 @396 ]
-[s S367 . 1 `uc 1 RD 1 0 :1:0 
+[s S366 . 1 `uc 1 RD 1 0 :1:0 
 `uc 1 WR 1 0 :1:1 
 `uc 1 WREN 1 0 :1:2 
 `uc 1 WRERR 1 0 :1:3 
@@ -171,8 +169,8 @@
 `uc 1 EEPGD 1 0 :1:7 
 ]
 "2331
-[u S374 . 1 `S367 1 . 1 0 ]
-[v _EECON1bits EECON1bits `VES374  1 e 1 @396 ]
+[u S373 . 1 `S366 1 . 1 0 ]
+[v _EECON1bits EECON1bits `VES373  1 e 1 @396 ]
 "2361
 [v _EECON2 EECON2 `VEuc  1 e 1 @397 ]
 "2378
@@ -201,12 +199,12 @@
 [v _RE1 RE1 `VEb  1 e 0 @73 ]
 "2783
 [v _RE2 RE2 `VEb  1 e 0 @74 ]
-"2807
-[v _R_nW R_nW `VEb  1 e 0 @1186 ]
 "2810
 [v _SEN SEN `VEb  1 e 0 @1160 ]
 "2822
 [v _SSPEN SSPEN `VEb  1 e 0 @165 ]
+"2828
+[v _SSPIF SSPIF `VEb  1 e 0 @99 ]
 "2840
 [v _SSPM3 SSPM3 `VEb  1 e 0 @163 ]
 "2876
@@ -407,11 +405,11 @@
 {
 "19
 } 0
-"4 /data/Projects/Car-Black-Box-linux/firmware/i2c.c
+"17 /data/Projects/Car-Black-Box-linux/firmware/i2c.c
 [v _init_i2c init_i2c `(v  1 e 1 0 ]
 {
 [v init_i2c@baud baud `ul  1 p 4 6 ]
-"14
+"28
 } 0
 "5 /opt/microchip/xc8/v2.46/pic/sources/c99/common/__lldiv.c
 [v ___lldiv __lldiv `(ul  1 e 4 0 ]
@@ -494,48 +492,48 @@
 [v read_ds1307@addr addr `uc  1 a 1 6 ]
 "27
 } 0
-"69 /data/Projects/Car-Black-Box-linux/firmware/i2c.c
+"75 /data/Projects/Car-Black-Box-linux/firmware/i2c.c
 [v _i2c_write i2c_write `(i  1 e 2 0 ]
 {
 [v i2c_write@data data `uc  1 a 1 wreg ]
 [v i2c_write@data data `uc  1 a 1 wreg ]
-"71
+"77
 [v i2c_write@data data `uc  1 a 1 4 ]
-"75
+"82
 } 0
-"32
+"37
 [v _i2c_rep_start i2c_rep_start `(v  1 e 1 0 ]
 {
-"37
+"41
 } 0
-"39
+"43
 [v _i2c_stop i2c_stop `(v  1 e 1 0 ]
 {
-"43
+"48
 } 0
-"26
+"30
 [v _i2c_start i2c_start `(v  1 e 1 0 ]
 {
-"30
+"35
 } 0
-"45
+"50
 [v _i2c_read i2c_read `(uc  1 e 1 0 ]
 {
 [v i2c_read@ack ack `uc  1 a 1 wreg ]
-"47
+"52
 [v i2c_read@data data `uc  1 a 1 5 ]
-"45
+"50
 [v i2c_read@ack ack `uc  1 a 1 wreg ]
-"49
+"54
 [v i2c_read@ack ack `uc  1 a 1 4 ]
-"67
+"73
 } 0
-"16
-[v _i2c_wait_for_idle i2c_wait_for_idle `(v  1 s 1 i2c_wait_for_idle ]
+"10
+[v _i2c_wait i2c_wait `(v  1 s 1 i2c_wait ]
 {
-"22
-[v i2c_wait_for_idle@guard guard `ui  1 a 2 2 ]
-"24
+"12
+[v i2c_wait@guard guard `ui  1 a 2 2 ]
+"15
 } 0
 "5 /opt/microchip/xc8/v2.46/pic/sources/c99/common/awmod.c
 [v ___awmod __awmod `(i  1 e 2 0 ]

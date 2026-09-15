@@ -16,12 +16,12 @@ _SEN 488 0 ABS 0
 __end_of_view_log 1000 0 CODE 0
 __Hintentry C 0 CODE 0
 __Lintentry 4 0 CODE 0
-__end_of_clcd_write A1A 0 CODE 0
+__end_of_clcd_write A11 0 CODE 0
 __pintentry 4 0 CODE 0
 _sec 30 0 BANK0 1
 _log AC 0 BANK1 1
 __end_of___awdiv 5D6 0 CODE 0
-_isr B42 0 CODE 0
+_isr B0F 0 CODE 0
 _pos 7A 0 COMMON 1
 view_log@i 5A 0 BANK0 1
 strncmp@l 77 0 COMMON 1
@@ -30,14 +30,13 @@ main@control_flag BE 0 BANK1 1
 _RCEN 48B 0 ABS 0
 _ADON F8 0 ABS 0
 strncmp@n 73 0 COMMON 1
-_read_adc 946 0 CODE 0
-_R_nW 4A2 0 ABS 0
+_read_adc 942 0 CODE 0
 read_ds1307@data 77 0 COMMON 1
-_init_adc 8F5 0 CODE 0
+_init_adc 8D8 0 CODE 0
 _time 3A 0 BANK0 1
 _main 4A 0 CODE 0
 _gear A0 0 BANK1 1
-_i2c_read A1A 0 CODE 0
+_i2c_read A34 0 CODE 0
 strncpy@n 74 0 COMMON 1
 ___sp 0 0 STACK 2
 btemp 7E 0 ABS 0
@@ -49,8 +48,9 @@ _ADCS1 FF 0 ABS 0
 _SSPM3 A3 0 ABS 0
 view_log@rlog 4D 0 BANK0 1
 strncpy@s 72 0 COMMON 1
-__end_of_strcpy A5E 0 CODE 0
+__end_of_strcpy A34 0 CODE 0
 _TRISB 86 0 ABS 0
+_SSPIF 63 0 ABS 0
 reset_vec 0 0 CODE 0
 _nDONE FA 0 ABS 0
 _TRISD 88 0 ABS 0
@@ -61,11 +61,11 @@ _PORTD 8 0 ABS 0
 _SSPEN A5 0 ABS 0
 _ACKDT 48D 0 ABS 0
 wtemp0 7E 0 ABS 0
-__end_of_read_ds1307 A89 0 CODE 0
+__end_of_read_ds1307 A88 0 CODE 0
 interrupt_function 4 0 CODE 0
 __Hconfig 2008 0 CONFIG 4
 __Lconfig 0 0 CONFIG 4
-__end_of_i2c_start 8E3 0 CODE 0
+__end_of_i2c_start 904 0 CODE 0
 _get_time BF2 0 CODE 0
 ?_read_adc 72 0 COMMON 1
 ?___awmod 72 0 COMMON 1
@@ -81,16 +81,17 @@ __Hfunctab 0 0 ENTRY 0
 __Lfunctab 0 0 ENTRY 0
 _TRISE1 449 0 ABS 0
 _TRISE2 44A 0 ABS 0
-_init_clcd 915 0 CODE 0
+_init_clcd 8ED 0 CODE 0
 _ADCON1 9F 0 ABS 0
 _EECON1 18C 0 ABS 0
 clear_log@reset_flag 79 0 COMMON 1
 _EECON2 18D 0 ABS 0
-__end_of_write_ds1307 9FA 0 CODE 0
+__end_of_write_ds1307 9F1 0 CODE 0
 main@speed C0 0 BANK1 1
 write_ds1307@addr 76 0 COMMON 1
 main@F1228 64 0 BANK0 1
 ?_strncmp 72 0 COMMON 1
+_i2c_wait 9BB 0 CODE 0
 __Hcommon 0 0 ABS 0
 __Lcommon 0 0 ABS 0
 log_car_event@event 49 0 BANK0 1
@@ -105,7 +106,7 @@ _TMR2IF 61 0 ABS 0
 _EEDATA 10C 0 ABS 0
 ?___lldiv 72 0 COMMON 1
 ?___awdiv 72 0 COMMON 1
-_i2c_stop 8E3 0 CODE 0
+_i2c_stop 904 0 CODE 0
 read_digital_keypad@once 7B 0 COMMON 1
 read_digital_keypad@mode 73 0 COMMON 1
 ?___lwdiv 76 0 COMMON 1
@@ -130,15 +131,14 @@ strncpy@cp 46 0 BANK0 1
 _clock_reg 20 0 BANK0 1
 ___heap_hi 0 0 ABS 0
 strcpy@src 72 0 COMMON 1
-_i2c_wait_for_idle 9BF 0 CODE 0
 __end_of_display_time D2F 0 CODE 0
 ___stackhi 0 0 ABS 0
-__end_of_i2c_rep_start 90A 0 CODE 0
+__end_of_i2c_rep_start 8ED 0 CODE 0
 login@i 2D 0 BANK0 1
 login@j 53 0 BANK0 1
 __end_of___awmod E8A 0 CODE 0
 _clear_log B75 0 CODE 0
-init_fetch0 96B 0 CODE 0
+init_fetch0 967 0 CODE 0
 __Hcode 0 0 ABS 0
 __Lcode 0 0 ABS 0
 main@gr BD 0 BANK1 1
@@ -147,11 +147,11 @@ __Lheap 0 0 HEAP 7
 main@menu_pos B9 0 BANK1 1
 __HcstackBANK0 0 0 ABS 0
 __LcstackBANK0 0 0 ABS 0
-_i2c_write 90A 0 CODE 0
+_i2c_write 910 0 CODE 0
 __pcstackBANK0 45 0 BANK0 1
 ___awmod@sign 78 0 COMMON 1
 saved_w 7E 0 ABS 0
-___bmul 993 0 CODE 0
+___bmul 98F 0 CODE 0
 __Hinit C 0 CODE 0
 __Linit C 0 CODE 0
 __end_of_main 2CA 0 CODE 0
@@ -160,8 +160,8 @@ __Htext 0 0 ABS 0
 __Lsivt C 0 CODE 0
 __Ltext 0 0 ABS 0
 ___bmul@multiplier 75 0 COMMON 1
-_strcpy A3B 0 CODE 0
-_clear_screen 92C 0 CODE 0
+_strcpy A11 0 CODE 0
+_clear_screen 928 0 CODE 0
 ___heap_lo 0 0 ABS 0
 __HdataBANK0 0 0 ABS 0
 __LdataBANK0 0 0 ABS 0
@@ -172,10 +172,9 @@ ___awdiv@sign 46 0 BANK0 1
 ___bmul@multiplicand 72 0 COMMON 1
 ___stacklo 0 0 ABS 0
 _T2CKPS0 90 0 ABS 0
-_SSPCON2 91 0 ABS 0
 __stringtab 800 0 STRING 0
 _T2CKPS1 91 0 ABS 0
-_eeprom_write AB4 0 CODE 0
+_eeprom_write AB3 0 CODE 0
 __HdataBANK1 0 0 ABS 0
 __LdataBANK1 0 0 ABS 0
 init_ds1307@dummy 78 0 COMMON 1
@@ -193,7 +192,7 @@ __Hbank0 0 0 ABS 0
 __Lbank0 0 0 ABS 0
 __Hbank1 0 0 ABS 0
 __Lbank1 0 0 ABS 0
-_i2c_start 8DA 0 CODE 0
+_i2c_start 8F8 0 CODE 0
 __Hbank2 0 0 ABS 0
 __Lbank2 0 0 ABS 0
 __Hbank3 0 0 ABS 0
@@ -205,14 +204,14 @@ __Lpowerup 0 0 CODE 0
 view_log@key 59 0 BANK0 1
 __ptext1 EF2 0 CODE 0
 eeprom_read@addr 73 0 COMMON 1
-__ptext2 A3B 0 CODE 0
+__ptext2 A11 0 CODE 0
 __ptext3 5D6 0 CODE 0
 login@attempt_rem 2E 0 BANK0 1
 ___stack_hi 0 0 STACK 2
-__ptext4 946 0 CODE 0
+__ptext4 942 0 CODE 0
 __ptext5 714 0 CODE 0
 __ptext6 2CA 0 CODE 0
-__ptext7 9A8 0 CODE 0
+__ptext7 9A4 0 CODE 0
 __HcstackBANK1 0 0 ABS 0
 __LcstackBANK1 0 0 ABS 0
 _log_car_event DD9 0 CODE 0
@@ -234,12 +233,12 @@ change_password@pwd 31 0 BANK0 1
 change_password@key 4E 0 BANK0 1
 change_password@pos 25 0 BANK0 1
 read_ds1307@addr 76 0 COMMON 1
-_clcd_putch 97E 0 CODE 0
+_clcd_putch 97A 0 CODE 0
 change_password@once 23 0 BANK0 1
 __H__absolute__ 0 0 ABS 0
 __L__absolute__ 0 0 ABS 0
-__end_of_init_timer2 946 0 CODE 0
-__end_of_init_adc 8FF 0 CODE 0
+__end_of_init_timer2 942 0 CODE 0
+__end_of_init_adc 8E2 0 CODE 0
 __Hstack 0 0 STACK 2
 __Lstack 0 0 STACK 2
 eeprom_write@addr 74 0 COMMON 1
@@ -249,11 +248,11 @@ display_dash_board@speed 4A 0 BANK0 1
 __end_of_get_time C3F 0 CODE 0
 __Hspace_0 1000 0 ABS 0
 __Lspace_0 0 0 ABS 0
-__end_of_isr B75 0 CODE 0
-_write_ds1307 9DC 0 CODE 0
+__end_of_isr B42 0 CODE 0
+_write_ds1307 9D3 0 CODE 0
 __Hspace_1 C2 0 ABS 0
 __Lspace_1 0 0 ABS 0
-_clcd_write 9FA 0 CODE 0
+_clcd_write 9F1 0 CODE 0
 init_i2c@baud 4B 0 BANK0 1
 _strncmp C8D 0 CODE 0
 __Hspace_2 0 0 ABS 0
@@ -270,20 +269,20 @@ ___lwdiv BAC 0 CODE 0
 __Lspace_3 0 0 ABS 0
 __Hspace_4 400F 0 ABS 0
 __Lspace_4 0 0 ABS 0
-__end_of_clear_screen 939 0 CODE 0
+__end_of_clear_screen 935 0 CODE 0
 _strncpy 7B7 0 CODE 0
 ___stack_lo 0 0 STACK 2
 display_dash_board@event 4D 0 BANK0 1
-__end_of_clcd_print B10 0 CODE 0
+__end_of_clcd_print B0F 0 CODE 0
 _init_display_controller D2F 0 CODE 0
 __end_of_display_dash_board DD9 0 CODE 0
-__end_of_i2c_write 915 0 CODE 0
+__end_of_i2c_write 91C 0 CODE 0
 __HidataBANK0 0 0 ABS 0
 __LidataBANK0 0 0 ABS 0
-__pidataBANK0 8EC 0 CODE 0
-_eeprom_read 9A8 0 CODE 0
+__pidataBANK0 8CF 0 CODE 0
+_eeprom_read 9A4 0 CODE 0
 eeprom_write@value 72 0 COMMON 1
-clear_ram0 8D2 0 CODE 0
+clear_ram0 8C7 0 CODE 0
 i2c_read@ack 74 0 COMMON 1
 write_ds1307@data 75 0 COMMON 1
 __HbssBANK0 0 0 ABS 0
@@ -291,11 +290,10 @@ __LbssBANK0 0 0 ABS 0
 __end_of_log_event C8D 0 CODE 0
 __pbssBANK0 20 0 BANK0 1
 __end_of_login_menu 7B7 0 CODE 0
-__end_of_clcd_putch 993 0 CODE 0
+__end_of_clcd_putch 98F 0 CODE 0
 change_password@reset_flag 4A 0 BANK0 1
 __HbssBANK1 0 0 ABS 0
 __LbssBANK1 0 0 ABS 0
-i2c_wait_for_idle@guard 72 0 COMMON 1
 __pbssBANK1 AC 0 BANK1 1
 __Hstringtext 0 0 ABS 0
 login_menu@menu_pos 2C 0 BANK0 1
@@ -304,51 +302,52 @@ __end_of_init_display_controller D82 0 CODE 0
 __pstringtext 600 0 STRCODE 0
 __ptext10 C3F 0 CODE 0
 __ptext20 D2F 0 CODE 0
-__ptext11 993 0 CODE 0
-__ptext30 A1A 0 CODE 0
-__ptext21 8F5 0 CODE 0
-__ptext40 AE1 0 CODE 0
-__ptext12 A89 0 CODE 0
-__ptext31 9BF 0 CODE 0
+__ptext11 98F 0 CODE 0
+__ptext30 A34 0 CODE 0
+__ptext21 8D8 0 CODE 0
+__ptext40 AE0 0 CODE 0
+__ptext12 A88 0 CODE 0
+__ptext31 9BB 0 CODE 0
 __ptext22 D82 0 CODE 0
-__ptext41 9FA 0 CODE 0
-__ptext13 939 0 CODE 0
+__ptext41 9F1 0 CODE 0
+__ptext13 935 0 CODE 0
 __ptext32 E31 0 CODE 0
 __ptext23 CDD 0 CODE 0
 __ptext42 BAC 0 CODE 0
 _EECON1bits 18C 0 ABS 0
 __HidataBANK1 0 0 ABS 0
 __LidataBANK1 0 0 ABS 0
-__ptext14 B10 0 CODE 0
+__ptext14 B42 0 CODE 0
 __ptext33 56D 0 CODE 0
-__pidataBANK1 920 0 CODE 0
+__pidataBANK1 91C 0 CODE 0
 __ptext24 BF2 0 CODE 0
-__ptext43 B42 0 CODE 0
+__ptext43 B0F 0 CODE 0
 __ptext15 E8A 0 CODE 0
 __ptext34 B75 0 CODE 0
-__ptext25 A5E 0 CODE 0
-__ptext16 958 0 CODE 0
+__ptext25 A5D 0 CODE 0
+__ptext16 954 0 CODE 0
 __ptext35 433 0 CODE 0
-__ptext26 90A 0 CODE 0
+i2c_wait@guard 72 0 COMMON 1
+__ptext26 910 0 CODE 0
 __end_of_clear_log BAC 0 CODE 0
-__ptext17 9DC 0 CODE 0
+__ptext17 9D3 0 CODE 0
 __ptext36 C8D 0 CODE 0
 __end_of_strncmp CDD 0 CODE 0
 ___awmod@divisor 72 0 COMMON 1
-__ptext27 8FF 0 CODE 0
-__ptext18 8CC 0 CODE 0
-__ptext37 AB4 0 CODE 0
+__ptext27 8E2 0 CODE 0
+__ptext18 8C1 0 CODE 0
+__ptext37 AB3 0 CODE 0
 read_adc@adc_reg_val 74 0 COMMON 1
-__end_of_read_adc 958 0 CODE 0
-_i2c_rep_start 8FF 0 CODE 0
-__ptext28 8E3 0 CODE 0
-__ptext19 915 0 CODE 0
-__ptext38 92C 0 CODE 0
-__end_of_i2c_stop 8EC 0 CODE 0
-__ptext29 8DA 0 CODE 0
-__ptext39 97E 0 CODE 0
+__end_of_read_adc 954 0 CODE 0
+_i2c_rep_start 8E2 0 CODE 0
+__ptext28 904 0 CODE 0
+__ptext19 8ED 0 CODE 0
+__ptext38 928 0 CODE 0
+__end_of_i2c_stop 910 0 CODE 0
+__ptext29 8F8 0 CODE 0
+__ptext39 97A 0 CODE 0
 _event_count 27 0 BANK0 1
-__end_of_init_clcd 920 0 CODE 0
+__end_of_init_clcd 8F8 0 CODE 0
 _INTCONbits B 0 ABS 0
 __Hend_init F 0 CODE 0
 __Lend_init C 0 CODE 0
@@ -357,28 +356,29 @@ login_menu@reset_flag 4A 0 BANK0 1
 ___lldiv@divisor 72 0 COMMON 1
 _STATUSbits 3 0 ABS 0
 ___awdiv@divisor 72 0 COMMON 1
+__end_of_i2c_wait 9D3 0 CODE 0
 ___lwdiv@divisor 76 0 COMMON 1
 strcpy@dest 78 0 COMMON 1
-_read_ds1307 A5E 0 CODE 0
-__end_of_i2c_read A3B 0 CODE 0
-_init_ds1307 958 0 CODE 0
+_read_ds1307 A5D 0 CODE 0
+__end_of_i2c_read A5D 0 CODE 0
+_init_ds1307 954 0 CODE 0
 __Hreset_vec 3 0 CODE 0
 __Lreset_vec 0 0 CODE 0
 _login_menu 714 0 CODE 0
 i2c_write@data 74 0 COMMON 1
-__end_of_init_digital_keypad 8D2 0 CODE 0
+__end_of_init_digital_keypad 8C7 0 CODE 0
 clcd_putch@addr 79 0 COMMON 1
-init_ram0 96F 0 CODE 0
-_clcd_print AE1 0 CODE 0
+init_ram0 96B 0 CODE 0
+_clcd_print AE0 0 CODE 0
 intlevel0 0 0 ENTRY 0
 intlevel1 0 0 ENTRY 0
 clcd_write@mode 72 0 COMMON 1
-__end_of_init_config AB4 0 CODE 0
+__end_of_init_config AB3 0 CODE 0
 intlevel2 0 0 ENTRY 0
 _read_digital_keypad 5D6 0 CODE 0
-_init_timer2 939 0 CODE 0
+_init_timer2 935 0 CODE 0
 intlevel3 0 0 ENTRY 0
-_init_digital_keypad 8CC 0 CODE 0
+_init_digital_keypad 8C1 0 CODE 0
 intlevel4 0 0 ENTRY 0
 intlevel5 0 0 ENTRY 0
 log_car_event@speed 4B 0 BANK0 1
@@ -392,33 +392,32 @@ ___lldiv@quotient 46 0 BANK0 1
 ___awdiv@quotient 47 0 BANK0 1
 ___lwdiv@quotient 47 0 BANK0 1
 ___int_stack_lo 0 0 STACK 2
-__end_of_init_i2c B42 0 CODE 0
-__end_of_eeprom_read 9BF 0 CODE 0
+__end_of_init_i2c B75 0 CODE 0
+__end_of_eeprom_read 9BB 0 CODE 0
 __Hmaintext 0 0 ABS 0
 __Lmaintext 0 0 ABS 0
-__end_of_init_ds1307 96B 0 CODE 0
+__end_of_init_ds1307 967 0 CODE 0
 __pmaintext 4A 0 CODE 0
 _change_password 433 0 CODE 0
 __HidataCOMMON 0 0 ABS 0
 __LidataCOMMON 0 0 ABS 0
 __Hinittext 0 0 ABS 0
 __Linittext 0 0 ABS 0
-__pidataCOMMON 8CA 0 CODE 0
-_init_config A89 0 CODE 0
-_init_i2c B10 0 CODE 0
+__pidataCOMMON 8BF 0 CODE 0
+_init_config A88 0 CODE 0
+_init_i2c B42 0 CODE 0
 __initialization F 0 CODE 0
 __stringbase 812 0 STRING 0
-__end_of_eeprom_write AE1 0 CODE 0
+__end_of_eeprom_write AE0 0 CODE 0
 __end_of_strncpy 7FF 0 CODE 0
 ___awmod@dividend 74 0 COMMON 1
 ___bmul@product 74 0 COMMON 1
 ___awmod@counter 77 0 COMMON 1
 clcd_print@addr 78 0 COMMON 1
 clcd_write@byte 75 0 COMMON 1
-__end_of_i2c_wait_for_idle 9DC 0 CODE 0
 _display_time CDD 0 CODE 0
 __end_of_login 433 0 CODE 0
-__end_of___bmul 9A8 0 CODE 0
+__end_of___bmul 9A4 0 CODE 0
 _return_time 2F 0 BANK0 1
 __end_of_read_digital_keypad 600 0 CODE 0
 ___lldiv@dividend 76 0 COMMON 1
@@ -443,37 +442,37 @@ text10 187E 1919 CODE 187E 0
 text24 17E4 187D CODE 17E4 0
 text42 1758 17E3 CODE 1758 0
 text34 16EA 1757 CODE 16EA 0
-text43 1684 16E9 CODE 1684 0
-text14 1620 1683 CODE 1620 0
-text40 15C2 161F CODE 15C2 0
-text37 1568 15C1 CODE 1568 0
-text12 1512 1567 CODE 1512 0
-text25 14BC 1511 CODE 14BC 0
-text2 1476 14BB CODE 1476 0
-text30 1434 1475 CODE 1434 0
-text41 13F4 1433 CODE 13F4 0
-text17 13B8 13F3 CODE 13B8 0
-text31 137E 13B7 CODE 137E 0
-text7 1350 137D CODE 1350 0
-text11 1326 134F CODE 1326 0
-text39 12FC 1325 CODE 12FC 0
-inittext 12D6 12FB CODE 12D6 0
-text16 12B0 12D5 CODE 12B0 0
+text14 1684 16E9 CODE 1684 0
+text43 161E 1683 CODE 161E 0
+text40 15C0 161D CODE 15C0 0
+text37 1566 15BF CODE 1566 0
+text12 1510 1565 CODE 1510 0
+text25 14BA 150F CODE 14BA 0
+text30 1468 14B9 CODE 1468 0
+text2 1422 1467 CODE 1422 0
+text41 13E2 1421 CODE 13E2 0
+text17 13A6 13E1 CODE 13A6 0
+text31 1376 13A5 CODE 1376 0
+text7 1348 1375 CODE 1348 0
+text11 131E 1347 CODE 131E 0
+text39 12F4 131D CODE 12F4 0
+inittext 12CE 12F3 CODE 12CE 0
+text16 12A8 12CD CODE 12A8 0
 strings 1000 1023 STRING 1000 0
-text4 128C 12AF CODE 128C 0
-text13 1272 128B CODE 1272 0
-text38 1258 1271 CODE 1258 0
-idataBANK1 1240 1257 CODE 1240 0
-text19 122A 123F CODE 122A 0
-text26 1214 1229 CODE 1214 0
-text27 11FE 1213 CODE 11FE 0
-text21 11EA 11FD CODE 11EA 0
-idataBANK0 11D8 11E9 CODE 11D8 0
-text28 11C6 11D7 CODE 11C6 0
-text29 11B4 11C5 CODE 11B4 0
-clrtext 11A4 11B3 CODE 11A4 0
-text18 1198 11A3 CODE 1198 0
-idataCOMMON 1194 1197 CODE 1194 0
+text4 1284 12A7 CODE 1284 0
+text13 126A 1283 CODE 126A 0
+text38 1250 1269 CODE 1250 0
+idataBANK1 1238 124F CODE 1238 0
+text26 1220 1237 CODE 1220 0
+text28 1208 121F CODE 1208 0
+text29 11F0 1207 CODE 11F0 0
+text19 11DA 11EF CODE 11DA 0
+text27 11C4 11D9 CODE 11C4 0
+text21 11B0 11C3 CODE 11B0 0
+idataBANK0 119E 11AF CODE 119E 0
+clrtext 118E 119D CODE 118E 0
+text18 1182 118D CODE 1182 0
+idataCOMMON 117E 1181 CODE 117E 0
 %locals
 dist/startup.o
 dist/startup.s
@@ -481,69 +480,69 @@ dist/startup.s
 90 C 0 CODE 0
 dist/blackbox.o
 dist/blackbox.s
-2189 F 0 CODE 0
-2192 F 0 CODE 0
-2312 F 0 CODE 0
-2313 10 0 CODE 0
-2314 11 0 CODE 0
-2315 12 0 CODE 0
-2316 13 0 CODE 0
-2317 14 0 CODE 0
-2318 15 0 CODE 0
-2319 16 0 CODE 0
-2320 17 0 CODE 0
-2321 18 0 CODE 0
-2325 1D 0 CODE 0
-2326 1E 0 CODE 0
-2327 1F 0 CODE 0
-2328 20 0 CODE 0
-2329 21 0 CODE 0
-2330 22 0 CODE 0
-2331 23 0 CODE 0
-2332 24 0 CODE 0
-2333 25 0 CODE 0
-2337 2A 0 CODE 0
-2338 2F 0 CODE 0
-2339 30 0 CODE 0
-2340 35 0 CODE 0
-2359 36 0 CODE 0
-2360 37 0 CODE 0
-2361 38 0 CODE 0
-2362 39 0 CODE 0
-2365 3E 0 CODE 0
-2366 3F 0 CODE 0
-2367 40 0 CODE 0
-2368 41 0 CODE 0
+2187 F 0 CODE 0
+2190 F 0 CODE 0
+2310 F 0 CODE 0
+2311 10 0 CODE 0
+2312 11 0 CODE 0
+2313 12 0 CODE 0
+2314 13 0 CODE 0
+2315 14 0 CODE 0
+2316 15 0 CODE 0
+2317 16 0 CODE 0
+2318 17 0 CODE 0
+2319 18 0 CODE 0
+2323 1D 0 CODE 0
+2324 1E 0 CODE 0
+2325 1F 0 CODE 0
+2326 20 0 CODE 0
+2327 21 0 CODE 0
+2328 22 0 CODE 0
+2329 23 0 CODE 0
+2330 24 0 CODE 0
+2331 25 0 CODE 0
+2335 2A 0 CODE 0
+2336 2F 0 CODE 0
+2337 30 0 CODE 0
+2338 35 0 CODE 0
+2357 36 0 CODE 0
+2358 37 0 CODE 0
+2359 38 0 CODE 0
+2360 39 0 CODE 0
+2363 3E 0 CODE 0
+2364 3F 0 CODE 0
+2365 40 0 CODE 0
+2366 41 0 CODE 0
+2372 46 0 CODE 0
 2374 46 0 CODE 0
-2376 46 0 CODE 0
-2377 47 0 CODE 0
-2286 96B 0 CODE 0
-2287 96B 0 CODE 0
-2288 96C 0 CODE 0
-2289 96D 0 CODE 0
-2290 96E 0 CODE 0
-2297 96F 0 CODE 0
-2298 96F 0 CODE 0
-2299 974 0 CODE 0
-2300 975 0 CODE 0
-2301 976 0 CODE 0
-2302 977 0 CODE 0
-2303 978 0 CODE 0
-2304 979 0 CODE 0
-2305 97A 0 CODE 0
-2306 97B 0 CODE 0
-2307 97C 0 CODE 0
-2308 97D 0 CODE 0
-2346 8D2 0 CODE 0
-2347 8D2 0 CODE 0
-2348 8D3 0 CODE 0
-2349 8D3 0 CODE 0
-2350 8D4 0 CODE 0
-2351 8D5 0 CODE 0
-2352 8D6 0 CODE 0
-2353 8D7 0 CODE 0
-2354 8D8 0 CODE 0
-2355 8D9 0 CODE 0
+2375 47 0 CODE 0
+2284 967 0 CODE 0
+2285 967 0 CODE 0
+2286 968 0 CODE 0
+2287 969 0 CODE 0
+2288 96A 0 CODE 0
+2295 96B 0 CODE 0
+2296 96B 0 CODE 0
+2297 970 0 CODE 0
+2298 971 0 CODE 0
+2299 972 0 CODE 0
+2300 973 0 CODE 0
+2301 974 0 CODE 0
+2302 975 0 CODE 0
+2303 976 0 CODE 0
+2304 977 0 CODE 0
+2305 978 0 CODE 0
+2306 979 0 CODE 0
+2344 8C7 0 CODE 0
+2345 8C7 0 CODE 0
+2346 8C8 0 CODE 0
+2347 8C8 0 CODE 0
+2348 8C9 0 CODE 0
+2349 8CA 0 CODE 0
+2350 8CB 0 CODE 0
+2351 8CC 0 CODE 0
+2352 8CD 0 CODE 0
+2353 8CE 0 CODE 0
 main.c
 42 4A 0 CODE 0
 43 4A 0 CODE 0
@@ -688,11 +687,11 @@ car_black_box_def.c
 258 FF5 0 CODE 0
 260 FFF 0 CODE 0
 /opt/microchip/xc8/v2.46/pic/sources/c99/common/strcpy.c
-3 A3B 0 CODE 0
-5 A3C 0 CODE 0
-6 A3E 0 CODE 0
-6 A43 0 CODE 0
-8 A5D 0 CODE 0
+3 A11 0 CODE 0
+5 A12 0 CODE 0
+6 A14 0 CODE 0
+6 A19 0 CODE 0
+8 A33 0 CODE 0
 digital_keypad.c
 11 5D6 0 CODE 0
 15 5D7 0 CODE 0
@@ -704,12 +703,12 @@ digital_keypad.c
 33 5FE 0 CODE 0
 34 5FF 0 CODE 0
 adc.c
-19 946 0 CODE 0
-24 946 0 CODE 0
-27 949 0 CODE 0
-29 94D 0 CODE 0
-31 953 0 CODE 0
-33 957 0 CODE 0
+19 942 0 CODE 0
+24 942 0 CODE 0
+27 945 0 CODE 0
+29 949 0 CODE 0
+31 94F 0 CODE 0
+33 953 0 CODE 0
 car_black_box_def.c
 180 714 0 CODE 0
 183 717 0 CODE 0
@@ -793,11 +792,11 @@ car_black_box_def.c
 177 431 0 CODE 0
 178 432 0 CODE 0
 /opt/microchip/xc8/v2.46/pic/sources/c99/pic/__eeread.c
-6 9A8 0 CODE 0
-8 9A9 0 CODE 0
-9 9A9 0 CODE 0
-18 9B0 0 CODE 0
-19 9BE 0 CODE 0
+6 9A4 0 CODE 0
+8 9A5 0 CODE 0
+9 9A5 0 CODE 0
+18 9AC 0 CODE 0
+19 9BA 0 CODE 0
 car_black_box_def.c
 80 DD9 0 CODE 0
 82 DD9 0 CODE 0
@@ -840,44 +839,45 @@ car_black_box_def.c
 77 C88 0 CODE 0
 78 C8C 0 CODE 0
 /opt/microchip/xc8/v2.46/pic/sources/c99/common/Umul8.c
-4 993 0 CODE 0
-6 994 0 CODE 0
-43 995 0 CODE 0
-44 999 0 CODE 0
-45 99D 0 CODE 0
-45 99D 0 CODE 0
-46 99F 0 CODE 0
-46 99F 0 CODE 0
-47 9A1 0 CODE 0
-50 9A6 0 CODE 0
-51 9A7 0 CODE 0
+4 98F 0 CODE 0
+6 990 0 CODE 0
+43 991 0 CODE 0
+44 995 0 CODE 0
+45 999 0 CODE 0
+45 999 0 CODE 0
+46 99B 0 CODE 0
+46 99B 0 CODE 0
+47 99D 0 CODE 0
+50 9A2 0 CODE 0
+51 9A3 0 CODE 0
 main.c
-28 A89 0 CODE 0
-31 A89 0 CODE 0
-32 A8E 0 CODE 0
-33 A93 0 CODE 0
-34 AA2 0 CODE 0
-35 AA7 0 CODE 0
-36 AAC 0 CODE 0
-37 AB1 0 CODE 0
-38 AB2 0 CODE 0
-39 AB3 0 CODE 0
+28 A88 0 CODE 0
+31 A88 0 CODE 0
+32 A8D 0 CODE 0
+33 A92 0 CODE 0
+34 AA1 0 CODE 0
+35 AA6 0 CODE 0
+36 AAB 0 CODE 0
+37 AB0 0 CODE 0
+38 AB1 0 CODE 0
+39 AB2 0 CODE 0
 timers.c
-5 939 0 CODE 0
-8 939 0 CODE 0
-9 93C 0 CODE 0
-12 93D 0 CODE 0
-15 941 0 CODE 0
-18 942 0 CODE 0
-19 945 0 CODE 0
+5 935 0 CODE 0
+8 935 0 CODE 0
+9 938 0 CODE 0
+12 939 0 CODE 0
+15 93D 0 CODE 0
+18 93E 0 CODE 0
+19 941 0 CODE 0
 i2c.c
-4 B10 0 CODE 0
-7 B10 0 CODE 0
-10 B13 0 CODE 0
-10 B1C 0 CODE 0
-10 B22 0 CODE 0
-13 B3E 0 CODE 0
-14 B41 0 CODE 0
+17 B42 0 CODE 0
+20 B42 0 CODE 0
+23 B45 0 CODE 0
+23 B4E 0 CODE 0
+23 B54 0 CODE 0
+26 B70 0 CODE 0
+27 B73 0 CODE 0
+28 B74 0 CODE 0
 /opt/microchip/xc8/v2.46/pic/sources/c99/common/__lldiv.c
 5 E8A 0 CODE 0
 13 E8A 0 CODE 0
@@ -908,29 +908,29 @@ i2c.c
 29 EE9 0 CODE 0
 30 EF1 0 CODE 0
 ds1307.c
-5 958 0 CODE 0
-9 958 0 CODE 0
-10 95F 0 CODE 0
-11 962 0 CODE 0
-12 96A 0 CODE 0
-29 9DC 0 CODE 0
-31 9DD 0 CODE 0
-32 9E2 0 CODE 0
-33 9E8 0 CODE 0
-34 9EE 0 CODE 0
-35 9F4 0 CODE 0
-36 9F9 0 CODE 0
+5 954 0 CODE 0
+9 954 0 CODE 0
+10 95B 0 CODE 0
+11 95E 0 CODE 0
+12 966 0 CODE 0
+29 9D3 0 CODE 0
+31 9D4 0 CODE 0
+32 9D9 0 CODE 0
+33 9DF 0 CODE 0
+34 9E5 0 CODE 0
+35 9EB 0 CODE 0
+36 9F0 0 CODE 0
 digital_keypad.c
-4 8CC 0 CODE 0
-7 8CC 0 CODE 0
-9 8D1 0 CODE 0
+4 8C1 0 CODE 0
+7 8C1 0 CODE 0
+9 8C6 0 CODE 0
 clcd.c
-39 915 0 CODE 0
-42 915 0 CODE 0
-45 918 0 CODE 0
-46 919 0 CODE 0
-48 91A 0 CODE 0
-49 91F 0 CODE 0
+39 8ED 0 CODE 0
+42 8ED 0 CODE 0
+45 8F0 0 CODE 0
+46 8F1 0 CODE 0
+48 8F2 0 CODE 0
+49 8F7 0 CODE 0
 16 D2F 0 CODE 0
 19 D2F 0 CODE 0
 22 D37 0 CODE 0
@@ -947,12 +947,12 @@ clcd.c
 36 D7C 0 CODE 0
 37 D81 0 CODE 0
 adc.c
-3 8F5 0 CODE 0
-8 8F5 0 CODE 0
-12 8F9 0 CODE 0
-13 8FC 0 CODE 0
-16 8FD 0 CODE 0
-17 8FE 0 CODE 0
+3 8D8 0 CODE 0
+8 8D8 0 CODE 0
+12 8DC 0 CODE 0
+13 8DF 0 CODE 0
+16 8E0 0 CODE 0
+17 8E1 0 CODE 0
 car_black_box_def.c
 53 D82 0 CODE 0
 55 D85 0 CODE 0
@@ -991,53 +991,59 @@ car_black_box_def.c
 37 C3D 0 CODE 0
 38 C3E 0 CODE 0
 ds1307.c
-14 A5E 0 CODE 0
-18 A5F 0 CODE 0
-19 A64 0 CODE 0
-20 A6A 0 CODE 0
-21 A70 0 CODE 0
-22 A75 0 CODE 0
-23 A7B 0 CODE 0
-24 A82 0 CODE 0
-26 A87 0 CODE 0
-27 A88 0 CODE 0
+14 A5D 0 CODE 0
+18 A5E 0 CODE 0
+19 A63 0 CODE 0
+20 A69 0 CODE 0
+21 A6F 0 CODE 0
+22 A74 0 CODE 0
+23 A7A 0 CODE 0
+24 A81 0 CODE 0
+26 A86 0 CODE 0
+27 A87 0 CODE 0
 i2c.c
-69 90A 0 CODE 0
-71 90B 0 CODE 0
-72 910 0 CODE 0
-74 914 0 CODE 0
-75 914 0 CODE 0
-32 8FF 0 CODE 0
-34 8FF 0 CODE 0
-35 904 0 CODE 0
-37 909 0 CODE 0
-39 8E3 0 CODE 0
-41 8E3 0 CODE 0
-42 8E8 0 CODE 0
-43 8EB 0 CODE 0
-26 8DA 0 CODE 0
-28 8DA 0 CODE 0
-29 8DF 0 CODE 0
-30 8E2 0 CODE 0
-45 A1A 0 CODE 0
-49 A1B 0 CODE 0
-50 A20 0 CODE 0
-52 A23 0 CODE 0
-53 A28 0 CODE 0
-55 A2C 0 CODE 0
-57 A31 0 CODE 0
-58 A34 0 CODE 0
-59 A35 0 CODE 0
-61 A35 0 CODE 0
-62 A38 0 CODE 0
-64 A38 0 CODE 0
-66 A39 0 CODE 0
-67 A3A 0 CODE 0
-16 9BF 0 CODE 0
-22 9BF 0 CODE 0
-23 9C3 0 CODE 0
-23 9D2 0 CODE 0
-24 9DB 0 CODE 0
+75 910 0 CODE 0
+77 911 0 CODE 0
+78 914 0 CODE 0
+79 916 0 CODE 0
+81 91B 0 CODE 0
+82 91B 0 CODE 0
+37 8E2 0 CODE 0
+39 8E2 0 CODE 0
+40 8E7 0 CODE 0
+41 8EC 0 CODE 0
+43 904 0 CODE 0
+45 904 0 CODE 0
+46 907 0 CODE 0
+47 90A 0 CODE 0
+48 90F 0 CODE 0
+30 8F8 0 CODE 0
+32 8F8 0 CODE 0
+33 8FB 0 CODE 0
+34 8FE 0 CODE 0
+35 903 0 CODE 0
+50 A34 0 CODE 0
+54 A35 0 CODE 0
+55 A38 0 CODE 0
+56 A3B 0 CODE 0
+57 A40 0 CODE 0
+60 A44 0 CODE 0
+62 A49 0 CODE 0
+63 A4C 0 CODE 0
+64 A4D 0 CODE 0
+66 A4D 0 CODE 0
+67 A50 0 CODE 0
+68 A50 0 CODE 0
+69 A53 0 CODE 0
+70 A56 0 CODE 0
+72 A5B 0 CODE 0
+73 A5C 0 CODE 0
+10 9BB 0 CODE 0
+12 9BB 0 CODE 0
+13 9BF 0 CODE 0
+13 9C8 0 CODE 0
+14 9D1 0 CODE 0
+15 9D2 0 CODE 0
 /opt/microchip/xc8/v2.46/pic/sources/c99/common/awmod.c
 5 E31 0 CODE 0
 12 E31 0 CODE 0
@@ -1178,36 +1184,36 @@ car_black_box_def.c
 7 CDA 0 CODE 0
 8 CDC 0 CODE 0
 /opt/microchip/xc8/v2.46/pic/sources/c99/pic/__eewrite.c
-6 AB4 0 CODE 0
-8 AB5 0 CODE 0
-9 AE0 0 CODE 0
+6 AB3 0 CODE 0
+8 AB4 0 CODE 0
+9 ADF 0 CODE 0
 car_black_box_def.c
-91 92C 0 CODE 0
-93 92C 0 CODE 0
-94 933 0 CODE 0
-95 938 0 CODE 0
+91 928 0 CODE 0
+93 928 0 CODE 0
+94 92F 0 CODE 0
+95 934 0 CODE 0
 clcd.c
-51 97E 0 CODE 0
-53 981 0 CODE 0
-54 988 0 CODE 0
-55 992 0 CODE 0
-57 AE1 0 CODE 0
-59 AE1 0 CODE 0
-61 AE8 0 CODE 0
-63 AE9 0 CODE 0
-64 AF9 0 CODE 0
-64 AFB 0 CODE 0
-61 AFF 0 CODE 0
-61 B0B 0 CODE 0
-66 B0F 0 CODE 0
-4 9FA 0 CODE 0
-6 9FB 0 CODE 0
-7 A05 0 CODE 0
-9 A07 0 CODE 0
-10 A08 0 CODE 0
-11 A0D 0 CODE 0
-13 A10 0 CODE 0
-14 A19 0 CODE 0
+51 97A 0 CODE 0
+53 97D 0 CODE 0
+54 984 0 CODE 0
+55 98E 0 CODE 0
+57 AE0 0 CODE 0
+59 AE0 0 CODE 0
+61 AE7 0 CODE 0
+63 AE8 0 CODE 0
+64 AF8 0 CODE 0
+64 AFA 0 CODE 0
+61 AFE 0 CODE 0
+61 B0A 0 CODE 0
+66 B0E 0 CODE 0
+4 9F1 0 CODE 0
+6 9F2 0 CODE 0
+7 9FC 0 CODE 0
+9 9FE 0 CODE 0
+10 9FF 0 CODE 0
+11 A04 0 CODE 0
+13 A07 0 CODE 0
+14 A10 0 CODE 0
 /opt/microchip/xc8/v2.46/pic/sources/c99/common/lwdiv.c
 5 BAC 0 CODE 0
 13 BAC 0 CODE 0
@@ -1235,17 +1241,17 @@ clcd.c
 29 BED 0 CODE 0
 30 BF1 0 CODE 0
 isr.c
-4 B42 0 CODE 0
-8 B42 0 CODE 0
-10 B48 0 CODE 0
-10 B4A 0 CODE 0
-10 B51 0 CODE 0
-12 B57 0 CODE 0
-13 B59 0 CODE 0
-15 B5E 0 CODE 0
-16 B60 0 CODE 0
-17 B61 0 CODE 0
-18 B6B 0 CODE 0
-22 B6D 0 CODE 0
-24 B6E 0 CODE 0
+4 B0F 0 CODE 0
+8 B0F 0 CODE 0
+10 B15 0 CODE 0
+10 B17 0 CODE 0
+10 B1E 0 CODE 0
+12 B24 0 CODE 0
+13 B26 0 CODE 0
+15 B2B 0 CODE 0
+16 B2D 0 CODE 0
+17 B2E 0 CODE 0
+18 B38 0 CODE 0
+22 B3A 0 CODE 0
+24 B3B 0 CODE 0
 4 4 0 CODE 0
