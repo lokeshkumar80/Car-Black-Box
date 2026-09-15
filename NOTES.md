@@ -38,7 +38,7 @@ car-blackbox-linux/
 ├── .vscode/            # build/simulate tasks + XC8 IntelliSense paths
 ├── SETUP.md            # full install + wiring + run guide (start here)
 ├── NOTES.md            # this file
-├── README.md           # upstream placeholder (empty)
+├── README.md           # overview + every problem hit on the way, in detail
 └── firmware/
     ├── Makefile        # command-line xc8-cc build (no MPLAB X)
     ├── blackbox.sim1   # ready-made SimulIDE 1.1.0-SR2 circuit
