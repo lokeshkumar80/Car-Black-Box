@@ -10,6 +10,9 @@ Layout, from car_black_box_def.c:
     0x04       unused
     0x05+      log records, 10 bytes each: HHMMSS EE SS
                HH MM SS = time, EE = event code, SS = speed
+               The firmware keeps a 10-slot ring (0x05-0x68): slot = pos*10+5,
+               pos wraps at 10. Clear Log only resets the RAM counters, so
+               stale records stay in EEPROM and will show up here.
 
 Usage:  python3 tools/readlog.py [path/to/blackbox.sim1]
 """
@@ -52,4 +55,4 @@ for i, r in records:
     s = "".join(ch(b) for b in r)
     ev = s[6:8]
     print(f"{i:<3} {s[0:2]}:{s[2:4]}:{s[4:6]}  {ev!r} {EVENTS.get(ev,'?'):<14} {s[8:10]}")
-print(f"\n{len(records)} record(s); capacity is 25 in 256 bytes.")
+print(f"\n{len(records)} record(s) present; the firmware ring holds 10 (oldest overwritten).")

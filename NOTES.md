@@ -170,7 +170,11 @@ wire per SETUP.md, load `dist/blackbox.hex`, set PIC frequency to 20 MHz, run.
   `main()` unconditionally rewrites `2424` into EEPROM 0x00-0x03 on every boot,
   so "Change Password" only holds until the next reset. That is upstream
   behaviour, not a porting artefact. Layout: password at 0x00-0x03, byte 0x04
-  unused, log records from 0x05 at 10 bytes each -> 25 records max in 256 B.
+  unused, log records from 0x05 at 10 bytes each in a **10-slot ring**
+  (`pos` wraps at 10, so 0x05-0x68; the rest of the 256 B is never used).
+  `event_count` and `pos` live in RAM: after a reset the menu can only index
+  records logged since boot, even though the older bytes are still in EEPROM;
+  and *Clear Log* resets those two counters without erasing anything.
 - **I2C**: SCL=RC3, SDA=RC4, 4.7 kΩ pull-ups. DS1307 slave 0xD0.
 - Keypad init does **not** enable internal pull-ups → external 10 kΩ pull-ups
   are required on RB0–RB5.
